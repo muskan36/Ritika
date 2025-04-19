@@ -42,8 +42,9 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="w-full flex justify-center items-center py-5 font-average" >
-      <div className="relative w-[97%] rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-black" style={{ height: '700px' }}>
+    <div className="w-full flex justify-center items-center py-2 md:py-5 font-average">
+      <div className="relative w-[95%] md:w-[97%] rounded-xl md:rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-black" 
+           style={{ height: 'clamp(500px, 90vh, 700px)' }}>
 
         {/* Background Image */}
         <AnimatePresence mode="wait">
@@ -60,13 +61,14 @@ const Hero = () => {
               alt="Hero Background"
               fill
               className="object-cover object-[center_top]"
+              priority
             />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/80 to-black/50 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/80 to-black/50 z-10" />
           </motion.div>
         </AnimatePresence>
 
         {/* Overlay Content */}
-        <div className="relative z-20 w-full h-full flex justify-between px-10 py-10 text-white">
+        <div className="relative z-20 w-full h-full flex flex-col md:flex-row justify-between px-4 md:px-10 py-6 md:py-10 text-white">
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
@@ -74,24 +76,24 @@ const Hero = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 30 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
-              className="flex flex-col justify-end max-w-xl space-y-5 pb-6"
+              className="flex flex-col justify-end max-w-xl space-y-3 md:space-y-5 pb-4 md:pb-6"
             >
-              <div className="flex justify-between items-center bg-white text-black rounded-lg w-[225px] p-1  shadow-md">
-                <div className="px-4 py-2 ">
+              <div className="flex justify-between items-center bg-white text-black rounded-lg w-[180px] md:w-[225px] p-1 shadow-md">
+                <div className="px-3 md:px-4 py-1 md:py-2">
                   <p className="text-xs font-semibold text-[#434242] leading-tight">Patients Treated</p>
                   <p className="text-xs font-semibold text-[#434242] leading-tight">Till Date</p>
                 </div>
-                <div className="bg-[#F4A300] px-4 py-2 rounded-md flex flex-col justify-center items-center">
-                  <span className="text-2xl font-bold leading-none">2</span>
+                <div className="bg-[#F4A300] px-3 md:px-4 py-1 md:py-2 rounded-md flex flex-col justify-center items-center">
+                  <span className="text-xl md:text-2xl font-bold leading-none">2</span>
                   <span className="text-xs font-semibold">Lakhs</span>
                 </div>
               </div>
-              <h1 className="text-6xl  leading-tight font-average">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl leading-tight font-average">
                 {content[index].title}<br />
                 {content[index].subtitle}
               </h1>
 
-              <p className="text-base text-gray-100 font-light max-w-md font-average">
+              <p className="text-sm md:text-base text-gray-100 font-light max-w-md font-average">
                 {content[index].description}
               </p>
 
@@ -104,8 +106,8 @@ const Hero = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Right Labels */}
-          <div className="flex flex-col justify-center gap-4 text-right">
+          {/* Right Labels - Hidden on mobile, visible from md breakpoint */}
+          <div className="hidden md:flex flex-col justify-center gap-4 text-right">
             {labels.map((label, i) => {
               const isActive = i === index;
               return (
@@ -131,6 +133,18 @@ const Hero = () => {
                 </motion.div>
               );
             })}
+          </div>
+
+          {/* Mobile Indicators - Only visible on mobile */}
+          <div className="md:hidden flex justify-center gap-2 mt-4">
+            {labels.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIndex(i)}
+                className={`w-2 h-2 rounded-full transition-colors ${i === index ? 'bg-white' : 'bg-white/50'}`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
           </div>
         </div>
       </div>

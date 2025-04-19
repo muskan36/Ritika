@@ -1,71 +1,75 @@
 "use client"
 
-import Image from 'next/image'
-import { motion, useAnimation, useInView } from 'framer-motion'
-import { useRef, useEffect, useState } from 'react'
+import Image from "next/image"
+import { motion, useAnimation, useInView } from "framer-motion"
+import { useRef, useEffect, useState } from "react"
 
 const prescriptions = [
   {
-    title: 'Smart Medication Insights',
-    desc: 'AI adjusts dosage & timing based on personal data',
-    image: '/assets/sp1.png',
-    backgroundIcon: '/assets/magnify.png',
-    style: 'items-center justify-center',
-    gradient: 'bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]',
+    title: "Smart Medication Insights",
+    desc: "AI adjusts dosage & timing based on personal data",
+    image: "/assets/sp1.png",
+    backgroundIcon: "/assets/magnify.png",
+    style: "items-center justify-center",
+    gradient: "bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]",
     contentBottom: false,
   },
   {
-    title: 'Drug Interaction Alerts',
-    desc: 'AI detects harmful combinations',
-    image: '/assets/sp2.png',
-    style: 'items-center justify-center',
-    gradient: 'bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]',
+    title: "Drug Interaction Alerts",
+    desc: "AI detects harmful combinations",
+    image: "/assets/sp2.png",
+    style: "items-center justify-center",
+    gradient: "bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]",
     contentBottom: false,
   },
   {
-    title: 'Seamless Pharmacy Integration From Doctors',
-    desc: 'Users connect directly with healthcare providers and pharmacies',
-    image: '/assets/sp3.png',
-    backgroundIcon: '/assets/sp3label.png',
-    style: 'items-center justify-center',
-    gradient: 'bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]',
+    title: "Seamless Pharmacy Integration From Doctors",
+    desc: "Users connect directly with healthcare providers and pharmacies",
+    image: "/assets/sp3.png",
+    backgroundIcon: "/assets/sp3label.png",
+    style: "items-center justify-center",
+    gradient: "bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]",
     contentBottom: true,
-    imagePosition: 'absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[240px] h-[240px]',
-    imagePadding: 'pt-8',
+    imagePosition: "absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[240px] h-[240px]",
+    imagePadding: "pt-8",
   },
   {
-    title: 'Personalized Reminder',
-    desc: 'Context-aware notifications instead of rigid alarms',
-    image: '/assets/sp4.png',
-    style: 'items-center justify-center',
-    gradient: 'bg-[linear-gradient(180deg,rgba(232,240,250,0.8)_0%,rgba(243,245,255,1)_100%)]',
+    title: "Personalized Reminder",
+    desc: "Context-aware notifications instead of rigid alarms",
+    image: "/assets/sp4.png",
+    style: "items-center justify-center",
+    gradient: "bg-[linear-gradient(180deg,rgba(232,240,250,0.8)_0%,rgba(243,245,255,1)_100%)]",
     contentBottom: true,
-    imagePosition: 'absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[240px] h-[240px]',
-    imagePadding: 'pt-8',
+    imagePosition: "absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[240px] h-[240px]",
+    imagePadding: "pt-8",
   },
 ]
 
 const SmartPrescriptionSection = () => {
   const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const isInView = useInView(sectionRef, {
+    once: true,
+    amount: 0.1,
+    margin: "-100px 0px",
+  })
   const controls = useAnimation()
   const [hovered, setHovered] = useState(null)
 
   useEffect(() => {
     if (isInView) {
-      controls.start('visible')
+      controls.start("visible")
     }
   }, [isInView, controls])
 
-  // Create a sequence effect for header elements
+  // Header animation variants
   const headerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-      }
-    }
+        staggerChildren: 0.5, // Slower stagger timing
+      },
+    },
   }
 
   const titleBadgeVariants = {
@@ -75,12 +79,12 @@ const SmartPrescriptionSection = () => {
       y: 0,
       scale: 1,
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 200,
         damping: 12,
-        duration: 0.5
-      }
-    }
+        duration: 1, // Slower duration
+      },
+    },
   }
 
   const headingVariants = {
@@ -89,236 +93,233 @@ const SmartPrescriptionSection = () => {
       opacity: 1,
       scale: 1,
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 100,
         damping: 15,
-        delay: 0.2
-      }
-    }
+        delay: 0.3, // Added delay
+      },
+    },
   }
 
-  // 3D floating card effect
+  // Container variants with staggered children
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.6
-      }
+        staggerChildren: 0.3, // Slower stagger timing
+        delayChildren: 0.5, // Delay children entry
+      },
+    },
+  }
+
+  // All cards come from bottom with slight variation
+  const getCardEntryPosition = () => {
+    return {
+      y: 300,
+      opacity: 0,
+      scale: 0.9
     }
   }
 
-  // More dramatic card entrance animation
+  // Card variants with upward motion
   const cardVariants = {
-    hidden: (i) => ({
-      opacity: 0,
-      y: 80 + i * 20,
-      x: i % 2 === 0 ? -50 : 50,
-      scale: 0.7,
-      rotateY: i % 2 === 0 ? -10 : 10,
-      rotateX: 5
-    }),
-    visible: {
-      opacity: 1,
+    hidden: getCardEntryPosition(),
+    visible: (idx) => ({
       y: 0,
-      x: 0,
+      opacity: 1,
       scale: 1,
-      rotateY: 0,
-      rotateX: 0,
       transition: {
-        type: 'spring',
-        damping: 18,
-        stiffness: 90,
-        mass: 0.8,
-        duration: 0.9
-      }
-    },
+        type: "spring",
+        damping: 20,
+        stiffness: 80,
+        delay: idx * 0.3, // Slower delay
+        duration: 1.2, // Slower duration
+      },
+    }),
     hover: {
-      y: -10,
-      scale: 1.03,
-      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+      y: -15,
+      scale: 1.05,
+      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
       transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 10,
-        duration: 0.2
-      }
-    }
+        type: "spring",
+        stiffness: 400,
+        damping: 15,
+        duration: 0.4, // Slower hover duration
+      },
+    },
   }
 
-  // Floating animation for background icons
-  const backgroundIconVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.7,
-      rotate: -5
-    },
-    visible: {
-      opacity: 0.8,
-      scale: 1,
-      rotate: 0,
-      transition: {
-        duration: 1.2,
-        ease: "easeOut",
-        delay: 1
-      }
-    },
-    floating: {
-      y: [0, -10, 0],
-      rotate: [0, 2, 0],
-      transition: {
-        duration: 6,
-        repeat: Infinity,
-        repeatType: "mirror",
-        ease: "easeInOut"
-      }
-    }
-  }
-
-  // More playful image animations
+  // Image variants - also from bottom
   const imageVariants = {
     hidden: {
+      y: 200,
       opacity: 0,
-      y: 80,
-      scale: 0.5,
-      rotate: 10
+      scale: 0.85
     },
     visible: {
-      opacity: 1,
       y: 0,
+      opacity: 1,
       scale: 1,
-      rotate: 0,
       transition: {
-        type: 'spring',
-        stiffness: 100,
-        damping: 12,
-        delay: 0.8,
-        duration: 1
-      }
+        type: "spring",
+        stiffness: 60,
+        damping: 15,
+        delay: 0.7, // Added delay for smoother transition
+        duration: 1.2, // Slower duration
+      },
     },
-    pulse: {
-      scale: [1, 1.05, 1],
-      y: [0, -5, 0],
+    hover: {
+      scale: 1.05,
+      y: -5,
       transition: {
-        duration: 3,
-        repeat: Infinity,
-        repeatType: "mirror",
-        ease: "easeInOut"
-      }
-    }
+        type: "spring",
+        stiffness: 300,
+        damping: 10,
+        duration: 0.4, // Slower hover effect
+      },
+    },
   }
 
   // Text animation variants
   const textVariants = {
     hidden: {
       opacity: 0,
-      y: 30,
-      filter: "blur(4px)"
+      y: 20,
     },
     visible: (delay) => ({
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
-        duration: 0.7,
-        delay: delay,
-        ease: [0.25, 0.1, 0.25, 1.0]
-      }
-    })
+        duration: 1, // Slower transition
+        delay: 0.9 + delay * 0.1, // Increased delay
+        ease: "easeOut",
+      },
+    }),
+  }
+
+  // Background icon variants
+  const backgroundIconVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 0.8,
+      scale: 1,
+      transition: {
+        duration: 1.2, // Slower duration
+        delay: 1, // Increased delay
+        ease: "easeOut",
+      },
+    },
+    floating: {
+      y: [0, -10, 0],
+      transition: {
+        duration: 8, // Slower floating
+        repeat: Number.POSITIVE_INFINITY,
+        repeatType: "mirror",
+        ease: "easeInOut",
+      },
+    },
   }
 
   return (
-    <section ref={sectionRef} className="py-12 px-6 md:px-20 overflow-hidden font-average">
+    <section ref={sectionRef} className="py-16 px-6 md:px-20 overflow-hidden font-average relative">
+      {/* Section header */}
       <motion.div
-        className="text-center mb-8"
+        className="text-center mb-16"
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         variants={headerVariants}
       >
         <motion.div
           variants={titleBadgeVariants}
-          className="inline-block border-1 border-[#F2F2F2] rounded-full px-6 py-2 mb-2 relative"
+          className="inline-block border border-[#F2F2F2] rounded-full px-6 py-2 mb-4 relative overflow-hidden bg-white shadow-sm"
+          whileHover={{
+            scale: 1.05,
+            boxShadow: "0 4px 20px -5px rgba(74, 156, 238, 0.3)"
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 10
+          }}
         >
+          {/* Animated background glow */}
           <motion.div
-            className="absolute inset-0 bg-blue-50 rounded-full"
+            className="absolute inset-0  rounded-full"
             initial={{ scale: 0, opacity: 0 }}
-            animate={isInView ? { scale: 1, opacity: 0.5 } : {}}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            animate={isInView ? {
+              scale: 1.2,
+              opacity: 0.4,
+              transition: {
+                duration: 1.2,
+                delay: 0.6,
+                ease: "easeOut"
+              }
+            } : {}}
           />
-          <p className="text-xs text-[#5D5D5D] tracking-wide uppercase font-medium relative z-10">
+
+          {/* Pulsing ring effect */}
+          <motion.div
+            className="absolute inset-0 border-2 border-transparent rounded-full"
+            animate={isInView ? {
+              borderColor: "rgba(74, 156, 238, 0.3)",
+              scale: 1.1,
+              opacity: 0,
+              transition: {
+                duration: 1.5,
+                repeat: Infinity,
+                repeatDelay: 1.5
+              }
+            } : {}}
+          />
+
+          {/* Main text with gradient */}
+          <p className="text-xs tracking-wide uppercase font-medium relative z-10 bg-gradient-to-r from-[#4A9CEE] via-[#3498db] to-[#2980B9] text-transparent bg-clip-text">
             Smart Prescriptions
           </p>
+
+          {/* Optional: Animated dots for high-tech feel */}
+          <motion.div
+            className="absolute -right-1 -top-1 w-2 h-2 bg-[#4A9CEE] rounded-full"
+            animate={isInView ? {
+              y: [0, -3, 0],
+              opacity: [0.8, 1, 0.8],
+              transition: {
+                duration: 1.5,
+                repeat: Infinity
+              }
+            } : {}}
+          />
         </motion.div>
 
-        <motion.h2
-          variants={headingVariants}
-          className="text-3xl md:text-4xl font-medium font-average"
-        >
-          <motion.span
-            className="text-[#004488] inline-block"
-            initial={{ opacity: 1 }}
-            animate={isInView ? {
-              opacity: [1, 1, 1],
-              transition: { duration: 1.5, delay: 0.6 }
-            } : {}}
-          >
-            <motion.span
-              className="inline-block"
-              initial={{ backgroundSize: "0% 3px" }}
-              animate={isInView ? { backgroundSize: "100% 3px" } : {}}
-              transition={{ duration: 1.5, delay: 0.6 }}
-              style={{
-
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "0 100%"
-              }}
-            >
-              Smartest Way To
-            </motion.span>
-          </motion.span>
+        <motion.h2 variants={headingVariants} className="text-3xl md:text-5xl font-medium font-average mb-6">
+          <span className="text-[#004488]">Smartest Way To</span>
           <br />
-          {/* Fixed second span */}
-          <motion.span
-            className="text-black inline-block"
-            initial={{ opacity: 1 }}
-            animate={isInView ? {
-              opacity: [1, 1, 1],
-              transition: { duration: 1.5, delay: 1 }
-            } : {}}
-          >
-            <motion.span
-              className="inline-block"
-              initial={{ backgroundSize: "0% 3px" }}
-              animate={isInView ? { backgroundSize: "100% 3px" } : {}}
-              transition={{ duration: 1.5, delay: 1 }}
-              style={{
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "0 100%"
-              }}
-            >
-              Manage Your Prescriptions
-            </motion.span>
-          </motion.span>
+          <span className="text-black">Manage Your Prescriptions</span>
         </motion.h2>
       </motion.div>
 
+      {/* Main grid with animated cards */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate={controls}
-        className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-8 relative z-10"
       >
         {prescriptions.map((card, idx) => (
           <motion.div
             key={idx}
             custom={idx}
             variants={cardVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
             whileHover="hover"
             onMouseEnter={() => setHovered(idx)}
             onMouseLeave={() => setHovered(null)}
-            className={`rounded-xl p-5 shadow-sm relative overflow-hidden min-h-[280px] flex flex-col ${card.gradient} transform perspective-1000`}
-            style={{ transformStyle: "preserve-3d" }}
+            className={`rounded-2xl p-6 shadow-sm relative overflow-hidden min-h-[320px] flex flex-col ${card.gradient}`}
           >
             {/* Shimmer effect on hover */}
             {hovered === idx && (
@@ -326,30 +327,34 @@ const SmartPrescriptionSection = () => {
                 initial={{ x: "-100%", opacity: 0.3 }}
                 animate={{ x: "200%" }}
                 transition={{ duration: 1.5, ease: "easeInOut" }}
-                className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white to-transparent"
+                className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/70 to-transparent"
                 style={{ mixBlendMode: "overlay" }}
               />
             )}
 
-            {/* Text Content with staggered animation */}
-            <div className={`relative z-10 flex flex-col gap-1 ${card.contentBottom ? 'mt-auto mb-3' : ''}`}>
+            {/* Text Content */}
+            <div className={`relative z-10 flex flex-col gap-2 ${card.contentBottom ? "mt-auto mb-4" : ""}`}>
               <motion.h3
-                custom={0.2 + idx * 0.1}
+                custom={idx}
                 variants={textVariants}
-                className="font-bold text-lg text-[#00373F] mb-0"
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                className="font-bold text-xl md:text-2xl text-[#00373F] mb-1"
               >
                 {card.title}
               </motion.h3>
               <motion.p
-                custom={0.4 + idx * 0.1}
+                custom={idx + 0.2}
                 variants={textVariants}
-                className="text-sm font-semibold text-[#6B6B6B] max-w-sm"
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                className="text-sm md:text-base font-medium text-[#6B6B6B] max-w-sm"
               >
                 {card.desc}
               </motion.p>
             </div>
 
-            {/* Background Icon with floating animation */}
+            {/* Background Icon */}
             {(idx === 0 || idx === 2) && card.backgroundIcon && (
               <motion.div
                 variants={backgroundIconVariants}
@@ -362,22 +367,26 @@ const SmartPrescriptionSection = () => {
                   alt="background icon"
                   width={400}
                   height={400}
+                  className="opacity-40"
                 />
               </motion.div>
             )}
 
-            {/* Image section with pulse animation */}
+            {/* Image section */}
             {idx >= 2 ? (
               <motion.div
                 variants={imageVariants}
-                animate={isInView ? ["visible", "pulse"] : "hidden"}
-                className={`relative top-8 flex-grow ${card.imagePadding || ''}`}
+                initial="hidden"
+                animate={isInView ? ["visible", "hover"] : "hidden"}
+                whileHover="hover"
+                className={`relative top-8 flex-grow ${card.imagePadding || ""}`}
               >
                 <div className={`${card.imagePosition} overflow-hidden`}>
                   <Image
                     src={card.image}
                     alt={card.title}
-                    fill
+                    width={240}
+                    height={240}
                     className="object-contain"
                   />
                 </div>
@@ -385,70 +394,23 @@ const SmartPrescriptionSection = () => {
             ) : (
               <motion.div
                 variants={imageVariants}
-                animate={isInView ? ["visible", "pulse"] : "hidden"}
+                initial="hidden"
+                animate={isInView ? ["visible", "hover"] : "hidden"}
+                whileHover="hover"
                 className={`relative top-3 z-10 flex ${card.style} mt-auto`}
               >
                 <Image
                   src={card.image}
                   alt={card.title}
-                  width={idx === 1 ? 200 : 280}
-                  height={200}
-                  className="object-contain max-h-[180px] mx-auto drop-shadow-lg"
+                  width={idx === 1 ? 220 : 300}
+                  height={220}
+                  className="object-contain max-h-[200px] mx-auto drop-shadow-xl"
                 />
-              </motion.div>
-            )}
-
-            {/* Interactive element on hover */}
-            {hovered === idx && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="absolute bottom-3 right-3 z-20 bg-blue-500 text-white rounded-full p-2 cursor-pointer"
-                whileHover={{ scale: 1.1, backgroundColor: "#0052cc" }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
               </motion.div>
             )}
           </motion.div>
         ))}
       </motion.div>
-
-      {/* Floating pills background decoration */}
-      <div className="relative w-full h-0">
-        {[1, 2, 3, 4, 5].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{
-              opacity: 0,
-              x: Math.random() * 100 - 50,
-              y: Math.random() * -50 - 100,
-              rotate: Math.random() * 180 - 90
-            }}
-            animate={isInView ? {
-              opacity: [0, 0.3, 0],
-              x: [null, Math.random() * 200 - 100],
-              y: [null, Math.random() * 200],
-              rotate: [null, Math.random() * 360 - 180],
-            } : {}}
-            transition={{
-              duration: 10 + i * 3,
-              repeat: Infinity,
-              delay: i * 2,
-              ease: "linear"
-            }}
-            className={`absolute w-8 h-3 rounded-full bg-gradient-to-r ${i % 2 === 0 ? 'from-blue-300 to-cyan-200' : 'from-indigo-300 to-purple-200'
-              }`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `-${Math.random() * 100 + 50}px`
-            }}
-          />
-        ))}
-      </div>
     </section>
   )
 }

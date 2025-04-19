@@ -28,8 +28,8 @@ const whyChooseContent = [
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
       duration: 0.8,
@@ -154,23 +154,37 @@ export default function WhyChooseUs() {
       <div className="relative max-w-full w-[90%] rounded-3xl overflow-hidden">
         <div className="px-6 sm:px-8 lg:px-12 py-10">
           <div className="text-center mb-8 lg:mb-12">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                transition: { duration: 0.6, ease: "easeOut" }
+              }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 4px 15px -3px rgba(0, 0, 0, 0.1)"
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 10
+              }}
               viewport={{ once: true, margin: "-100px" }}
-              className="inline-block border-1 border-[#F2F2F2] rounded-full px-6 py-2 mb-4"
+              className="inline-block border border-[#F2F2F2] rounded-full px-6 py-2 mb-4 bg-white shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <p className="text-xs text-[#5D5D5D] tracking-wide uppercase font-medium font-average">
+              <p className="text-xs tracking-wide uppercase font-medium font-average bg-gradient-to-r from-[#3498db] via-[#9B59B6] to-[#E74C3C] text-transparent bg-clip-text">
                 Why Choose Us
               </p>
             </motion.div>
-            <motion.h2 
+
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true, margin: "-100px" }}
-              className="text-3xl sm:text-4xl font-semibold"
+              className="text-3xl sm:text-4xl "
             >
               <span className="text-[#5BB9EC]">Why Choose </span>
               <span className="text-[#004488]">Bishop Pharmacy?</span>
@@ -206,7 +220,7 @@ export default function WhyChooseUs() {
                 </div>
               </div>
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -217,7 +231,7 @@ export default function WhyChooseUs() {
                   {whyChooseContent.map((_, index) => (
                     <div key={index} className="flex items-center">
                       {index > 0 && (
-                        <motion.div 
+                        <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: "64px" }}
                           transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
@@ -252,7 +266,7 @@ export default function WhyChooseUs() {
                   transition={transition}
                   className="space-y-4"
                 >
-                  <motion.h3 
+                  <motion.h3
                     variants={fadeIn}
                     initial="hidden"
                     animate="visible"
@@ -260,8 +274,8 @@ export default function WhyChooseUs() {
                   >
                     {whyChooseContent[currentSlide].title}
                   </motion.h3>
-                  
-                  <motion.p 
+
+                  <motion.p
                     variants={fadeIn}
                     initial="hidden"
                     animate="visible"
@@ -271,19 +285,19 @@ export default function WhyChooseUs() {
                     {whyChooseContent[currentSlide].desc}
                   </motion.p>
 
-                  <motion.ul 
+                  <motion.ul
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
                     className="space-y-2 mt-4"
                   >
                     {whyChooseContent[currentSlide].features.map((feature, index) => (
-                      <motion.li 
-                        key={index} 
+                      <motion.li
+                        key={index}
                         variants={featureItem}
                         className="flex items-center gap-2"
                       >
-                        <motion.span 
+                        <motion.span
                           whileHover={{ scale: 1.2 }}
                           className="h-2 w-2 rounded-full bg-purple-400"
                         ></motion.span>
@@ -291,9 +305,9 @@ export default function WhyChooseUs() {
                       </motion.li>
                     ))}
                   </motion.ul>
-                  
-                  <motion.button 
-                    whileHover={{ 
+
+                  <motion.button
+                    whileHover={{
                       scale: 1.05,
                       backgroundColor: "#f3f4f6",
                       transition: { duration: 0.3 }
@@ -302,12 +316,12 @@ export default function WhyChooseUs() {
                     className="inline-flex items-center mt-6 text-sm font-medium text-black border-2 border-black-300 rounded-full px-6 py-2 transition-colors"
                   >
                     <span className="pr-3">See How it Works</span>
-                    <motion.span 
-                      animate={{ 
+                    <motion.span
+                      animate={{
                         rotate: [0, 10, -10, 0],
                         x: [0, 5, 0]
                       }}
-                      transition={{ 
+                      transition={{
                         repeat: Infinity,
                         repeatType: "reverse",
                         duration: 1.5
@@ -324,15 +338,15 @@ export default function WhyChooseUs() {
                 {showGhost && ghostContent && (
                   <motion.div
                     initial={{ x: 0, opacity: 0.8, scale: 1 }}
-                    animate={{ 
-                      x: direction > 0 ? -100 : 100, 
-                      opacity: 0, 
+                    animate={{
+                      x: direction > 0 ? -100 : 100,
+                      opacity: 0,
                       scale: 0.95,
                       filter: "blur(4px)"
                     }}
                     exit={{ opacity: 0 }}
-                    transition={{ 
-                      duration: 0.6, 
+                    transition={{
+                      duration: 0.6,
                       ease: [0.4, 0, 0.2, 1],
                       scale: { duration: 0.4 }
                     }}
