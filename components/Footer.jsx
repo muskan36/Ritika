@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { ChevronRight, Send, ArrowRight, Mail } from "lucide-react"
+import { ChevronRight, Send, ArrowRight, Mail, MapPin, X } from "lucide-react"
 import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
@@ -28,6 +28,7 @@ export default function Footer() {
   const [howCanWeHelp, setHowCanWeHelp] = useState("")
   const [subscribed, setSubscribed] = useState(false)
   const [isFormSubmitted, setIsFormSubmitted] = useState(false)
+  const [showMap, setShowMap] = useState(false)
   const formRef = useRef(null)
 
   const handleSubmit = (e) => {
@@ -56,58 +57,44 @@ export default function Footer() {
     }
   }
 
+  const toggleMap = () => {
+    setShowMap(!showMap)
+  }
+
+  const missionRef = useRef(null)
+  const missionIsInView = useInView(missionRef, { once: true, amount: 0.5 })
+  const missionControls = useAnimation()
+
+  useEffect(() => {
+    if (missionIsInView) {
+      missionControls.start("visible")
+    }
+  }, [missionIsInView, missionControls])
+
+  const bottomSectionRef = useRef(null)
+  const bottomSectionIsInView = useInView(bottomSectionRef, { once: true, amount: 0.1 })
+  const bottomSectionControls = useAnimation()
+
+  useEffect(() => {
+    if (bottomSectionIsInView) {
+      bottomSectionControls.start("visible")
+    }
+  }, [bottomSectionIsInView, bottomSectionControls])
+
   return (
     <footer className="w-full overflow-hidden">
-      {/* Top blue section with contact form */}
+      {/* Top blue section with contact form - animations removed */}
       <div className="bg-gradient-to-br from-[#81B6FF] to-[#5a9be6] relative bottom-25 overflow-hidden font-average">
         {/* Background elements */}
-        <motion.div
-          className="absolute inset-0 overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-        >
-          <motion.div
-            className="absolute top-[-10%] right-[-5%] w-64 h-64 bg-white/10 rounded-full blur-3xl"
-            animate={{
-              x: [0, 10, 0],
-              y: [0, -10, 0],
-            }}
-            transition={{
-              repeat: Number.POSITIVE_INFINITY,
-              duration: 8,
-              ease: "easeInOut",
-            }}
-          />
-          <motion.div
-            className="absolute bottom-[10%] left-[5%] w-80 h-80 bg-white/5 rounded-full blur-3xl"
-            animate={{
-              x: [0, -10, 0],
-              y: [0, 10, 0],
-            }}
-            transition={{
-              repeat: Number.POSITIVE_INFINITY,
-              duration: 10,
-              ease: "easeInOut",
-              delay: 1,
-            }}
-          />
-        </motion.div>
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-[10%] left-[5%] w-80 h-80 bg-white/5 rounded-full blur-3xl" />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 py-24 md:py-32 grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
           {/* Left side - Call to action */}
-          <motion.div
-            className="text-white flex flex-col justify-center"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <motion.div
-              className="mb-6"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+          <div className="text-white flex flex-col justify-center">
+            <div className="mb-6">
               <svg
                 width="64"
                 height="64"
@@ -116,136 +103,68 @@ export default function Footer() {
                 xmlns="http://www.w3.org/2000/svg"
                 className="text-white/90"
               >
-                <motion.path
+                <path
                   d="M32 8L8 20L32 32L56 20L32 8Z"
                   stroke="white"
                   strokeWidth="1.5"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 0.5 }}
                 />
-                <motion.path
+                <path
                   d="M8 20V44L32 56V32"
                   stroke="white"
                   strokeWidth="1.5"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 0.8 }}
                 />
-                <motion.path
+                <path
                   d="M56 20V44L32 56"
                   stroke="white"
                   strokeWidth="1.5"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 1.1 }}
                 />
-                <motion.path
+                <path
                   d="M20 14L44 26"
                   stroke="white"
                   strokeWidth="1.5"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: 1.4 }}
                 />
-                <motion.path
+                <path
                   d="M20 38V14"
                   stroke="white"
                   strokeWidth="1.5"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: 1.7 }}
                 />
-                <motion.path
+                <path
                   d="M44 50V26"
                   stroke="white"
                   strokeWidth="1.5"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: 2 }}
                 />
               </svg>
-            </motion.div>
+            </div>
 
-            <motion.div
-              className="mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
+            <div className="mb-6">
               <p className="text-white/80 text-sm">Need immediate assistance?</p>
               <p className="text-white/80 text-sm">Let's make things happen—your goals, our expertise.</p>
-            </motion.div>
+            </div>
 
-            <motion.h2
-              className="text-4xl md:text-5xl mb-6 tracking-tight"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <motion.span
-                className="inline-block"
-                initial={{ y: 40, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-              >
-                COME ON,
-              </motion.span>
+            <h2 className="text-4xl md:text-5xl mb-6 tracking-tight">
+              <span className="inline-block">COME ON,</span>
               <br />
-              <motion.span
-                className="inline-block"
-                initial={{ y: 40, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.9 }}
-              >
-                GIVE US A
-              </motion.span>
+              <span className="inline-block">GIVE US A</span>
               <br />
-              <motion.span
-                className="inline-block"
-                initial={{ y: 40, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.1 }}
-              >
-                SHOUT!
-              </motion.span>
-            </motion.h2>
+              <span className="inline-block">SHOUT!</span>
+            </h2>
 
-            <motion.p
-              className="text-white/90 text-sm max-w-md leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.3 }}
-            >
+            <p className="text-white/90 text-sm max-w-md leading-relaxed">
               Could you specify which services you need before we get in touch? Use the Bishop Contact form to make your
               other questions related to your project. Let me know, and I'll provide the exact content you need!
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
           {/* Right side - Contact form */}
-          <motion.div
-            className="relative flex items-center justify-center"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          >
+          <div className="relative flex items-center justify-center">
             {/* Glass card effect */}
-            <motion.div
-              className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg p-6 relative z-10 w-full max-w-5xl mx-auto border border-white/20 hover:shadow-xl transition-shadow duration-300"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.5 }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-              }}
-            >
+            <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg p-6 relative z-10 w-full max-w-5xl mx-auto border border-white/20 hover:shadow-xl transition-shadow duration-300">
               {isFormSubmitted ? (
                 <div className="flex flex-col items-center justify-center h-full py-16 text-center">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -390,8 +309,8 @@ export default function Footer() {
                   </form>
                 </>
               )}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
 
         {/* Decoration elements */}
@@ -424,16 +343,15 @@ export default function Footer() {
         ></div>
       </div>
 
-      {/* Middle section - Mission statement */}
-      <div className="bg-white py-4 -mt-25 font-average">
+      {/* Middle section - Mission statement with Map Button */}
+      <div className="bg-white py-4 -mt-26 font-average relative">
         <div className="max-w-4xl mx-auto text-center px-4">
           {(() => {
-            const { ref, controls } = useScrollAnimation(0.5)
             return (
               <motion.div
-                ref={ref}
+                ref={missionRef}
                 initial="hidden"
-                animate={controls}
+                animate={missionControls}
                 variants={{
                   hidden: { opacity: 0, y: 30 },
                   visible: {
@@ -471,27 +389,106 @@ export default function Footer() {
                     },
                   }}
                 >
-                  <Link href="/about" className="group">
+                  <motion.button
+                    onClick={toggleMap}
+                    className="group flex items-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <p className="text-gray-500 text-sm border-b border-gray-300 inline-block group-hover:text-[#3498db] group-hover:border-[#3498db] transition-colors duration-300">
                       Want to learn more about Bishop Pharmacy?
                       <motion.span
                         className="inline-block ml-1"
-                        whileHover={{ x: 5 }}
+                        animate={{ x: showMap ? 5 : 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       >
                         <ArrowRight className="inline-block h-3 w-3" />
                       </motion.span>
                     </p>
-                  </Link>
+                  </motion.button>
                 </motion.div>
               </motion.div>
             )
           })()}
         </div>
+
+        {/* Map Section */}
+        <AnimatePresence>
+          {showMap && (
+            <motion.div
+              className="max-w-4xl mx-auto mt-8 mb-4 px-4 relative"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <motion.div
+                className="relative rounded-xl overflow-hidden shadow-lg"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                {/* Map Header */}
+                <div className="absolute top-0 left-0 right-0 z-10 bg-[#00ACC1] text-white py-2 px-4 flex justify-between items-center">
+                  <span className="font-medium text-sm">Map: Towards Clinic</span>
+                  <motion.button
+                    onClick={toggleMap}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="text-white/80 hover:text-white"
+                  >
+                    <X size={18} />
+                  </motion.button>
+                </div>
+
+                {/* Map Content */}
+                <div className="relative h-[350px] w-full bg-[#E1F5E9]">
+                  {/* Map Background */}
+                  <Image
+                    src="/assets/map.png"
+                    alt="Map of Bishop's Waltham"
+                    fill
+                    className="object-cover"
+                  />
+
+                  {/* Location Popup */}
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg overflow-hidden w-[350px]"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.5, type: "spring" }}
+                  >
+                    <div className="relative h-[150px] w-full">
+                      <Image
+                        src="/assets/map.png"
+                        alt="Bishop's Waltham"
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                        0:54
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <h3 className="font-bold text-gray-800">Bishop's Waltham</h3>
+                      <p className="text-sm text-gray-600">Southampton, UK</p>
+                    </div>
+                    <div className="flex justify-between items-center px-3 py-2 border-t border-gray-100">
+                      <button className="text-[#3498db] text-sm font-medium">View details</button>
+                      <div className="w-8 h-8 bg-[#3498db]/10 rounded-full flex items-center justify-center">
+                        <MapPin className="h-4 w-4 text-[#3498db]" />
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Bottom section - Links and info */}
-      <div className="bg-[#FAFAFF] py-16 relative overflow-hidden font-average rounded-t-[30px]">
+      <div className="bg-[#FAFAFF] py-16 relative overflow-hidden font-average">
         {/* Background decoration */}
         <motion.div
           className="absolute inset-0 overflow-hidden pointer-events-none"
@@ -527,16 +524,15 @@ export default function Footer() {
         </motion.div>
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 text-[#A8A8A8]">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             {/* Logo and newsletter subscription - 4 columns */}
             {(() => {
-              const { ref, controls } = useScrollAnimation(0.1)
               return (
                 <motion.div
                   className="md:col-span-3"
-                  ref={ref}
+                  ref={bottomSectionRef}
                   initial="hidden"
-                  animate={controls}
+                  animate={bottomSectionControls}
                   variants={{
                     hidden: { opacity: 0, y: 30 },
                     visible: {
@@ -547,7 +543,7 @@ export default function Footer() {
                   }}
                 >
                   <motion.div
-                    className="mb-4"
+                    className="mb-6"
                     variants={{
                       hidden: { opacity: 0, y: 20 },
                       visible: {
@@ -557,10 +553,14 @@ export default function Footer() {
                       },
                     }}
                   >
-                    <Image src="/assets/logo.png" alt="Bishops Waltham Pharmacy" width={150} height={150} />
+                    <img
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-KqM9lyZ7cXGNOPDyPXkGC3HkQdc1Zm.png"
+                      alt="Bishops Waltham Pharmacy"
+                      className="h-10"
+                    />
                   </motion.div>
                   <motion.p
-                    className="text-[#A8A8A8] text-sm mb-4"
+                    className="text-gray-600 text-sm mb-4"
                     variants={{
                       hidden: { opacity: 0 },
                       visible: {
@@ -573,69 +573,40 @@ export default function Footer() {
                   </motion.p>
 
                   {/* Email subscription */}
-                  <AnimatePresence mode="wait">
-                    {subscribed ? (
-                      <motion.div
-                        className="bg-green-50 text-green-700 px-4 py-3 rounded-md flex items-center"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        key="subscribed"
+                  {subscribed ? (
+                    <div className="bg-green-50 text-green-700 px-4 py-3 rounded-md flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        <span>Thank you for subscribing!</span>
-                      </motion.div>
-                    ) : (
-                      <motion.form
-                        onSubmit={handleSubscribe}
-                        className="flex"
-                        variants={{
-                          hidden: { opacity: 0, y: 20 },
-                          visible: {
-                            opacity: 1,
-                            y: 0,
-                            transition: { duration: 0.5, delay: 0.3 },
-                          },
-                        }}
-                        key="subscribe-form"
-                      >
-                        <div className="relative flex-grow">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                          <input
-                            type="email"
-                            placeholder="Enter Your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="flex-grow pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#7ab3e4] transition-all duration-200 w-full"
-                            required
-                          />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span>Thank you for subscribing!</span>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubscribe} className="flex">
+                      <div className="relative flex-grow">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <input
+                          type="email"
+                          placeholder="Enter Your email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="flex-grow pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#7ab3e4] transition-all duration-200 w-full"
+                          required
+                        />
+                      </div>
+                      <button className="bg-gradient-to-r from-[#7ab3e4] to-[#5a9be6] text-white px-4 py-2 text-sm font-medium rounded-r-md flex items-center group hover:from-[#5a9be6] hover:to-[#4a8bd6] transition-all duration-300">
+                        Subscribe
+                        <div className="ml-2 w-5 h-5 rounded-full bg-white flex items-center justify-center group-hover:bg-opacity-90 transition-all duration-300">
+                          <ChevronRight className="h-3 w-3 text-[#7ab3e4] group-hover:translate-x-0.5 transition-transform duration-300" />
                         </div>
-                        <motion.button
-                          className="bg-gradient-to-r from-[#7ab3e4] to-[#5a9be6] text-white px-4 py-2 text-sm font-medium rounded-r-md flex items-center group hover:from-[#5a9be6] hover:to-[#4a8bd6] transition-all duration-300"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          Subscribe
-                          <motion.div
-                            className="ml-2 w-5 h-5 rounded-full bg-white flex items-center justify-center group-hover:bg-opacity-90 transition-all duration-300"
-                            whileHover={{ rotate: 90 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                          >
-                            <ChevronRight className="h-3 w-3 text-[#7ab3e4]" />
-                          </motion.div>
-                        </motion.button>
-                      </motion.form>
-                    )}
-                  </AnimatePresence>
+                      </button>
+                    </form>
+                  )}
                 </motion.div>
               )
             })()}
@@ -644,432 +615,174 @@ export default function Footer() {
             <div className="hidden md:block md:col-span-1"></div>
 
             {/* Products column - 1.5 columns */}
-            {(() => {
-              const { ref, controls } = useScrollAnimation(0.1)
-              return (
-                <motion.div
-                  className="md:col-span-2"
-                  ref={ref}
-                  initial="hidden"
-                  animate={controls}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.7,
-                        ease: "easeOut",
-                        staggerChildren: 0.1,
-                        delayChildren: 0.2,
-                      },
-                    },
-                  }}
-                >
-                  <motion.h3
-                    className="text-gray-800 font-medium mb-5 text-base"
-                    variants={{
-                      hidden: { opacity: 0, y: 10 },
-                      visible: { opacity: 1, y: 0 },
-                    }}
-                  >
-                    Products
-                  </motion.h3>
-                  <motion.ul
-                    className="space-y-2"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { staggerChildren: 0.1 },
-                      },
-                    }}
-                  >
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            For Microsuction
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Weight Loss
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Travel Care
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                  </motion.ul>
-                </motion.div>
-              )
-            })()}
+            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.1s" }}>
+              <h3 className="text-gray-800 font-medium mb-5 text-base">Products</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        For Microsuction
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Weight Loss
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Travel Care
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
             {/* Solutions column - 1.5 columns */}
-            {(() => {
-              const { ref, controls } = useScrollAnimation(0.1)
-              return (
-                <motion.div
-                  className="md:col-span-2"
-                  ref={ref}
-                  initial="hidden"
-                  animate={controls}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.7,
-                        ease: "easeOut",
-                        staggerChildren: 0.1,
-                        delayChildren: 0.3,
-                      },
-                    },
-                  }}
-                >
-                  <motion.h3
-                    className="text-gray-800 font-medium mb-5 text-base"
-                    variants={{
-                      hidden: { opacity: 0, y: 10 },
-                      visible: { opacity: 1, y: 0 },
-                    }}
-                  >
-                    Solutions
-                  </motion.h3>
-                  <motion.ul
-                    className="space-y-2"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { staggerChildren: 0.1 },
-                      },
-                    }}
-                  >
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Guides
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Vaccines
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Documentation
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                  </motion.ul>
-                </motion.div>
-              )
-            })()}
+            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.2s" }}>
+              <h3 className="text-gray-800 font-medium mb-5 text-base">Solutions</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Guides
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Vaccines
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Documentation
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
             {/* Resources column - 1.5 columns */}
-            {(() => {
-              const { ref, controls } = useScrollAnimation(0.1)
-              return (
-                <motion.div
-                  className="md:col-span-2"
-                  ref={ref}
-                  initial="hidden"
-                  animate={controls}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.7,
-                        ease: "easeOut",
-                        staggerChildren: 0.1,
-                        delayChildren: 0.4,
-                      },
-                    },
-                  }}
-                >
-                  <motion.h3
-                    className="text-gray-800 font-medium mb-5 text-base"
-                    variants={{
-                      hidden: { opacity: 0, y: 10 },
-                      visible: { opacity: 1, y: 0 },
-                    }}
-                  >
-                    Resources
-                  </motion.h3>
-                  <motion.ul
-                    className="space-y-2"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { staggerChildren: 0.1 },
-                      },
-                    }}
-                  >
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Blog
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Guides
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Webinars
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Documentation
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                  </motion.ul>
-                </motion.div>
-              )
-            })()}
+            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.3s" }}>
+              <h3 className="text-gray-800 font-medium mb-5 text-base">Resources</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Blog
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Guides
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Webinars
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Documentation
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
             {/* Company column - 1.5 columns */}
-            {(() => {
-              const { ref, controls } = useScrollAnimation(0.1)
-              return (
-                <motion.div
-                  className="md:col-span-2"
-                  ref={ref}
-                  initial="hidden"
-                  animate={controls}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.7,
-                        ease: "easeOut",
-                        staggerChildren: 0.1,
-                        delayChildren: 0.5,
-                      },
-                    },
-                  }}
-                >
-                  <motion.h3
-                    className="text-gray-800 font-medium mb-5 text-base"
-                    variants={{
-                      hidden: { opacity: 0, y: 10 },
-                      visible: { opacity: 1, y: 0 },
-                    }}
-                  >
-                    Company
-                  </motion.h3>
-                  <motion.ul
-                    className="space-y-2"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { staggerChildren: 0.1 },
-                      },
-                    }}
-                  >
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            About Us
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Partners
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Privacy Policy
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                    <motion.li
-                      variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 },
-                      }}
-                    >
-                      <Link href="#" className="text-[#A8A8A8] hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                            Terms of Service
-                          </span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                      </Link>
-                    </motion.li>
-                  </motion.ul>
-                </motion.div>
-              )
-            })()}
+            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.4s" }}>
+              <h3 className="text-gray-800 font-medium mb-5 text-base">Company</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        About Us
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Partners
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Privacy Policy
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                    <span className="relative overflow-hidden">
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        Terms of Service
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-     
-        <motion.div
-          className="relative w-full overflow-hidden pointer-events-none -mb-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
-          transition={{ duration: 1.5, delay: 0.5 }}
-        >
-          <motion.div
-            className="text-[30vw] font-bold leading-none w-full text-center "
-            style={{
-              background: "linear-gradient(to bottom, #ABCBF4 25%, transparent 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-            }}
-            animate={{
-              y: [0, -10, 0],
-              opacity: [0.7, 0.9, 0.7],
-            }}
-            transition={{
-              repeat: Number.POSITIVE_INFINITY,
-              duration: 8,
-              ease: "easeInOut",
-            }}
-          >
-            Bishops
-          </motion.div>
-        </motion.div>
       </div>
     </footer>
   )

@@ -44,7 +44,11 @@ const Hero = () => {
   return (
     <div className="w-full flex justify-center items-center py-2 md:py-5 font-average">
       <div className="relative w-[95%] md:w-[97%] rounded-xl md:rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-black" 
-           style={{ height: 'clamp(500px, 90vh, 700px)' }}>
+           style={{ 
+             height: '100vh',
+             minHeight: '700px',
+             maxHeight: '1000px'
+           }}>
 
         {/* Background Image */}
         <AnimatePresence mode="wait">

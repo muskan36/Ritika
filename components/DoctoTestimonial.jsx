@@ -3,6 +3,7 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
 import { useRef, useState } from "react"
+import Link from "next/link"
 
 export default function DoctorTestimonial() {
   const sectionRef = useRef(null)
@@ -56,130 +57,115 @@ export default function DoctorTestimonial() {
     },
   }
 
-  const quoteVariants = {
-    hidden: { opacity: 0, scale: 0.7 },
+  const buttonVariants = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
-      opacity: 0.1,
-      scale: 1,
+      opacity: 1,
+      y: 0,
       transition: {
-        duration: 1.2,
+        duration: 0.5,
         ease: "easeOut",
-        delay: 0.5,
+        delay: 0.7,
+      },
+    },
+    hover: {
+      scale: 1.05,
+      transition: {
+        duration: 0.2,
+        ease: "easeInOut",
       },
     },
   }
 
   const contactVariants = {
-    hidden: { y: 50, opacity: 0 },
+    hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 20,
-        delay: 0.8,
-      },
-    },
-    hover: {
-      y: 0,
-      opacity: 1,
-      backgroundColor: "rgba(0, 0, 0, 0.7)",
-      transition: {
-        duration: 0.3,
+        duration: 0.5,
         ease: "easeOut",
+        delay: 0.8,
       },
     },
   }
 
   return (
-    <div className="w-full py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8 lg:px-12 flex justify-center items-center font-plusjakarta">
+    <div className="w-full py-6 px-4 sm:px-6 md:px-8 lg:px-10 flex justify-center items-center font-average">
       <motion.div
         ref={sectionRef}
-        className="max-w-full w-[85%]  bg-[#052544] rounded-xl md:rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg md:shadow-xl lg:shadow-2xl relative"
+        className="max-w-full w-[80%] bg-[#2D4356] rounded-xl md:rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg md:shadow-xl lg:shadow-2xl relative"
         variants={containerVariants}
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"} 
+        animate={isInView ? "visible" : "hidden"}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <motion.div
-          variants={quoteVariants}
-          className="absolute top-4 sm:top-6 left-4 sm:left-6 text-white opacity-0 text-6xl sm:text-7xl lg:text-8xl font-serif"
-        >
-          "
-        </motion.div>
-
-        <div className="p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-10 xl:gap-12 relative z-10">
-          <motion.div className="flex-1" style={{ y: y1 }}>
-            <motion.p variants={textVariants} className="text-blue-200 text-xs sm:text-sm uppercase tracking-wider mb-2">
-              Doctor&apos;s Testimonial
+        <div className="p-5 sm:p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row gap-4 lg:gap-6 relative z-10">
+          {/* Left content */}
+          <motion.div className="flex-1 flex flex-col" style={{ y: y1 }}>
+            <motion.p variants={textVariants} className="text-white/80 text-sm uppercase tracking-wide mb-1">
+              Book An Consultation
             </motion.p>
 
             <motion.h2
               variants={textVariants}
-              className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold mb-3 sm:mb-4"
+              className="text-white text-3xl sm:text-4xl md:text-5xl font-semibold mb-3"
             >
-              The Best Pharmacy in Bishop&apos;s Waltham
+              The Best Pharmacy
+              <br />
+              in Bishop's Waltham
             </motion.h2>
 
-            <motion.p variants={textVariants} className="text-gray-300 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed max-w-2xl">
-              I have been using Bishop&apos;s Waltham Pharmacy for years, and they have consistently provided
-              exceptional care and support. Their professional team ensures my patients receive the highest level of
-              service, for which I&apos;m always grateful.
+            <motion.p variants={textVariants} className="text-white/80 text-sm mb-4 leading-relaxed max-w-xl">
+              I have been using Bishop's Waltham Pharmacy for years, and they have consistently provided exceptional
+              care and support. Their professional team ensures my patients receive the highest level of service, for
+              which I am always grateful.
             </motion.p>
 
-            <motion.div variants={textVariants} className="mb-3 sm:mb-4">
-              <p className="text-white font-medium text-sm sm:text-base">Dr. Madhu</p>
-              <p className="text-blue-200 text-xs">Doctor at the Bishop Waltham Pharmacy</p>
+            <motion.div variants={buttonVariants} whileHover="hover" className="mt-2">
+              <Link href="/booking">
+                <motion.button className="bg-white/20 hover:bg-white/30 text-white py-2.5 px-6 rounded-full text-sm transition-colors duration-300">
+                  Book An Consultation Now
+                </motion.button>
+              </Link>
             </motion.div>
           </motion.div>
 
-          <motion.div 
-            variants={imageVariants} 
-            style={{ y: y2 }} 
-            className="w-full lg:w-2/5 xl:w-1/3 mt-4 sm:mt-0"
-          >
-            <div className="rounded-xl md:rounded-2xl p-2 sm:p-3 h-full">
-              <div className="bg-gray-100 rounded-lg md:rounded-xl p-2 sm:p-3 h-full flex flex-col">
-                <div className="mb-2">
-                  <p className="text-gray-600 text-xs">Owner & Doctor</p>
-                  <p className="text-gray-900 font-medium text-sm sm:text-base">Dr. Madhu</p>
-                </div>
-
-                <div className="relative flex-1 min-h-[180px] xs:min-h-[200px] sm:min-h-[220px] md:min-h-[240px] rounded-md sm:rounded-lg overflow-hidden">
-                  <Image
-                    src="/assets/docImage.png"
-                    alt="Doctor Madhu"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-              </div>
+          {/* Right content - Doctor image */}
+          <motion.div variants={imageVariants} style={{ y: y2 }} className="w-full lg:w-1/2 relative">
+            <div className="absolute top-0 right-0 text-white/20 text-center text-xl sm:text-2xl">
+              Doctor At
+              <br />
+              Bishops Waltham Pharmacy
+            </div>
+            <div className="h-[300px] sm:h-[300px] md:h-[330px] relative top-25 -mt-4">
+              <Image
+                src="/assets/doctestimonial1.png"
+                alt="Doctors at Bishop's Waltham Pharmacy"
+                fill
+                className="object-contain object-right-bottom"
+                priority
+              />
             </div>
           </motion.div>
         </div>
 
+        {/* Contact information footer */}
         <motion.div
-          className="w-full bg-black/50 text-white py-2 sm:py-3 px-4 sm:px-6 md:px-8 text-xs sm:text-sm"
+          className="w-1/2 bg-white/10 text-white py-2.5 px-6 text-sm rounded-tr-lg backdrop-blur-sm"
           variants={contactVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          whileHover="hover"
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3">
-            <div className="flex items-center flex-wrap">
-              <p className="mr-2 text-gray-300 whitespace-nowrap">Contact No.:</p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div className="flex items-center">
+              <p className="mr-2 text-white/70">Contact No.:</p>
               <p className="font-medium">01489 892459</p>
             </div>
-            <div className="flex items-center flex-wrap">
-              <p className="mr-2 text-gray-300 whitespace-nowrap">Email:</p>
-              <p className="font-medium break-all">pharmacy@mcl.nhs.net</p>
-            </div>
-            <div className="flex items-center flex-wrap">
-              <p className="mr-2 text-gray-300 whitespace-nowrap">Location:</p>
-              <p className="font-medium whitespace-nowrap">Bishop's Waltham, Hampshire</p>
+            <div className="flex items-center">
+              <p className="mr-2 text-white/70">Email Id:</p>
+              <p className="font-medium">pharmacy.fmc1@nhs.net</p>
             </div>
           </div>
         </motion.div>

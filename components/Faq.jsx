@@ -148,7 +148,7 @@ export default function FAQComponent() {
               transition={{ type: "spring", stiffness: 300 }}
               className="relative w-full h-[300px] md:h-[400px] lg:h-[350px] overflow-hidden rounded-2xl"
             >
-              <div className="absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-white via-white/80 to-transparent z-10"></div>
+              <div className="absolute bottom-0 left-0 w-full h-3/4  z-10"></div>
               <Image
                 src="/assets/faqimg.png"
                 alt="Pharmacist consulting with patients"
@@ -170,7 +170,7 @@ export default function FAQComponent() {
                 <button
                   onClick={() => toggleItem(item.id)}
                   className={`w-full flex items-center justify-between p-6 text-left ${
-                    openItem === item.id ? "bg-[#e8f0fa] text-[#004488]" : "bg-white text-gray-700"
+                    openItem === item.id ? "bg-[#F1F4FE] text-[#004488]" : "bg-[#F1F4FE] text-gray-700"
                   } rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100`}
                 >
                   <div className="flex items-center gap-4">
@@ -178,13 +178,13 @@ export default function FAQComponent() {
                   </div>
                   <div
                     className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                      openItem === item.id ? "bg-[#004488] rotate-180" : "bg-[#e8f0fa]"
+                      openItem === item.id ? "bg-[#81B6FF] rotate-180" : "bg-[#81B6FF]"
                     } transition-all duration-300`}
                   >
                     {openItem === item.id ? (
                       <Minus className="w-4 h-4 text-white" />
                     ) : (
-                      <Plus className="w-4 h-4 text-[#004488]" />
+                      <Plus className="w-4 h-4 text-white" />
                     )}
                   </div>
                 </button>
@@ -208,15 +208,6 @@ export default function FAQComponent() {
                           <div className="flex-shrink-0 w-1 bg-blue-100 rounded-full"></div>
                           <div>
                             {item.answer}
-                            <div className="mt-4 flex justify-end">
-                              <motion.button
-                                className="text-[#004488] text-sm font-medium flex items-center gap-1 hover:underline"
-                                whileHover={{ x: 5 }}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                Learn more <ArrowRight className="w-4 h-4" />
-                              </motion.button>
-                            </div>
                           </div>
                         </div>
                       </motion.div>

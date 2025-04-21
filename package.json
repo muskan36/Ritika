@@ -1,13 +1,14 @@
-{
+  {
   "name": "bishop_pharmacy",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint",
+  "export": "next build"
+},
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",
     "canvas-confetti": "^1.9.3",
