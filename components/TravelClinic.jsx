@@ -120,7 +120,7 @@ export default function TravelClinic() {
   return (
     <div
       ref={sectionRef}
-      className="max-w-full w-[90%] sm:w-[85%] mx-auto bg-white flex flex-col items-center justify-center py-10 sm:py-12 px-4 sm:px-6 md:px-20 overflow-hidden relative font-averge"
+      className="max-w-full w-[90%] sm:w-[85%] mx-auto bg-white flex flex-col items-center justify-center py-12 sm:py-12 px-4 sm:px-6 md:px-20 overflow-hidden relative font-average"
     >
       {/* Decorative background elements */}
       <motion.div
@@ -179,7 +179,7 @@ export default function TravelClinic() {
             }}
           >
             <Image
-              src="/assets/travelclinic.png"
+              src="/assets/travelclinic.webp"
               alt="Traveler looking at mountain view"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -240,7 +240,7 @@ export default function TravelClinic() {
             }}
           >
             <Image
-              src="/assets/travelclinic2.png"
+              src="/assets/travelclinic2.webp"
               alt="Traveler taking photos in mountains"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -257,7 +257,7 @@ export default function TravelClinic() {
             className="rounded-2xl overflow-hidden h-40 relative flex-shrink-0"
           >
             <Image
-              src="/assets/travelclinic.png"
+              src="/assets/travelclinic.webp"
               alt="Traveler looking at mountain view"
               fill
               className="object-cover"
@@ -270,7 +270,7 @@ export default function TravelClinic() {
             className="rounded-2xl overflow-hidden h-40 relative flex-shrink-0"
           >
             <Image
-              src="/assets/travelclinic2.png"
+              src="/assets/travelclinic2.webp"
               alt="Traveler taking photos in mountains"
               fill
               className="object-cover"

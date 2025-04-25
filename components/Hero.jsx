@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const bgImages = [
-  '/assets/heroimage1.png',
-  '/assets/heroimage2.png',
-  '/assets/heroimage3.png'
+  '/assets/heroimage1.webp',
+  '/assets/heroimage2.webp',
+  '/assets/heroimage3.webp'
 ];
 
 const labels = ['Ear Microsuction', 'Travel Clinic', 'Weight Loss'];
@@ -45,7 +46,7 @@ const Hero = () => {
     <div className="w-full flex justify-center items-center py-2 md:py-5 font-average">
       <div className="relative w-[95%] md:w-[97%] rounded-xl md:rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-black" 
            style={{ 
-             height: '100vh',
+             height: '90vh',
              minHeight: '700px',
              maxHeight: '1000px'
            }}>
@@ -72,7 +73,7 @@ const Hero = () => {
         </AnimatePresence>
 
         {/* Overlay Content */}
-        <div className="relative z-20 w-full h-full flex flex-col md:flex-row justify-between px-4 md:px-10 py-6 md:py-10 text-white">
+        <div className="relative z-20 w-full h-full flex flex-col md:flex-row justify-center md:justify-between px-4 md:px-10 py-6 md:py-10 text-white">
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
@@ -101,8 +102,8 @@ const Hero = () => {
                 {content[index].description}
               </p>
 
-              <button className="bg-white text-black rounded-full px-3 py-2 flex items-center shadow hover:bg-gray-100 transition w-fit">
-                <span className="pl-3 pr-4 text-sm font-semibold">Get it Done Now</span>
+              <button className="bg-white text-black rounded-full px-3 py-2 flex items-center shadow hover:bg-gray-100 transition w-fit cursor-pointer">
+               <Link href='/vaccines'> <span className="pl-3 pr-4 text-sm font-semibold ">Get An Appointment</span></Link>
                 <span className="bg-[#8DBBFF] p-1.5 rounded-full flex items-center justify-center">
                   <ArrowRight size={14} className="text-white" />
                 </span>
@@ -140,6 +141,7 @@ const Hero = () => {
           </div>
 
           {/* Mobile Indicators - Only visible on mobile */}
+          <div className='flex justify-center items-center md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2'>
           <div className="md:hidden flex justify-center gap-2 mt-4">
             {labels.map((_, i) => (
               <button
@@ -149,6 +151,7 @@ const Hero = () => {
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}
+          </div>
           </div>
         </div>
       </div>

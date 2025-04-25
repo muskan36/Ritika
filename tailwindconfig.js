@@ -27,7 +27,8 @@ module.exports = {
           inter: ['var(--font-inter)', 'sans-serif'],
           poppins: ['Poppins', 'sans-serif'],
           average: ['var(--font-average)', '"Average Sans"', 'sans-serif'],
-          plusjakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
+          plusjakarta: ['var(--font-plusjakarta)', '"Plus Jakarta Sans"', 'sans-serif'],
+
         },
         borderRadius: {
           xl: "1.25rem",

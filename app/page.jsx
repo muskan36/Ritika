@@ -39,14 +39,14 @@ export default function Home() {
       <AnimatePresence>
         {!loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-            <Hero />
-            <SmartPrescriptionSection />
+            <section id="home"><Hero /></section>
+            <section id="services"><SmartPrescriptionSection /></section>
             <WhyChooseUs />
-            <AboutUs />
-            <TravelClinic />
+            <section id="about"><AboutUs /></section>
+            <section id="locations"><TravelClinic /></section>
             <DoctorTestimonial />
-            <VaccinationComponent />
-            <FAQComponent />
+            <section id="vaccination"><VaccinationComponent /></section>
+            <section id="faq"><FAQComponent /></section>
             <BlogResources />
             <Footer />
           </motion.div>

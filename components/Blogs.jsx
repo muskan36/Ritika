@@ -88,8 +88,8 @@ export default function BlogResources() {
       tagline: "In Today's World an healthy posture and life is important! Read More...",
       author: "Olivia Rhye",
       date: "20 Jan 2022",
-      image: "/assets/blog1.png",
-      authorImage: "/assets/Avatar.png",
+      image: "/assets/blog1.webp",
+      authorImage: "/assets/Avatar.webp",
       readTime: "5 min read",
     },
     {
@@ -101,8 +101,8 @@ export default function BlogResources() {
       tagline: "Professional ear cleaning by certified specialists",
       author: "Phoenix Baker",
       date: "19 Jan 2022",
-      image: "/assets/blog2.png",
-      authorImage: "/assets/Avatar.png",
+      image: "/assets/blog2.webp",
+      authorImage: "/assets/Avatar.webp",
       readTime: "8 min read",
     },
     {
@@ -114,8 +114,8 @@ export default function BlogResources() {
       tagline: "Protect yourself before your next adventure",
       author: "Lana Steiner",
       date: "18 Jan 2022",
-      image: "/assets/blog3.png",
-      authorImage: "/assets/Avatar.png",
+      image: "/assets/blog3.webp",
+      authorImage: "/assets/Avatar.webp",
       readTime: "6 min read",
     },
   ]

@@ -5,6 +5,17 @@ import Link from "next/link"
 import { ChevronRight, Send, ArrowRight, Mail, MapPin, X } from "lucide-react"
 import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import dynamic from 'next/dynamic'
+
+// Dynamically import Leaflet components to avoid SSR issues
+const LeafletMapComponent = dynamic(() => import('./LeafletMapComponent'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
+      <p>Loading map...</p>
+    </div>
+  )
+})
 
 function useScrollAnimation(threshold = 0.1) {
   const ref = useRef(null)
@@ -29,6 +40,7 @@ export default function Footer() {
   const [subscribed, setSubscribed] = useState(false)
   const [isFormSubmitted, setIsFormSubmitted] = useState(false)
   const [showMap, setShowMap] = useState(false)
+  const [showMapInfoCard, setShowMapInfoCard] = useState(false)
   const formRef = useRef(null)
 
   const handleSubmit = (e) => {
@@ -61,6 +73,10 @@ export default function Footer() {
     setShowMap(!showMap)
   }
 
+  const toggleMapInfoCard = () => {
+    setShowMapInfoCard(!showMapInfoCard)
+  }
+
   const missionRef = useRef(null)
   const missionIsInView = useInView(missionRef, { once: true, amount: 0.5 })
   const missionControls = useAnimation()
@@ -80,6 +96,13 @@ export default function Footer() {
       bottomSectionControls.start("visible")
     }
   }, [bottomSectionIsInView, bottomSectionControls])
+
+  const pharmacyLocation = {
+    lat: 50.954602981609135,
+    lng: -1.2122092309991204,
+    name: "Bishop's Waltham Pharmacy",
+    address: "Southampton, UK"
+  }
 
   return (
     <footer className="w-full overflow-hidden">
@@ -103,42 +126,12 @@ export default function Footer() {
                 xmlns="http://www.w3.org/2000/svg"
                 className="text-white/90"
               >
-                <path
-                  d="M32 8L8 20L32 32L56 20L32 8Z"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M8 20V44L32 56V32"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M56 20V44L32 56"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M20 14L44 26"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M20 38V14"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M44 50V26"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
+                <path d="M32 8L8 20L32 32L56 20L32 8Z" stroke="white" strokeWidth="1.5" fill="none" />
+                <path d="M8 20V44L32 56V32" stroke="white" strokeWidth="1.5" fill="none" />
+                <path d="M56 20V44L32 56" stroke="white" strokeWidth="1.5" fill="none" />
+                <path d="M20 14L44 26" stroke="white" strokeWidth="1.5" fill="none" />
+                <path d="M20 38V14" stroke="white" strokeWidth="1.5" fill="none" />
+                <path d="M44 50V26" stroke="white" strokeWidth="1.5" fill="none" />
               </svg>
             </div>
 
@@ -343,149 +336,139 @@ export default function Footer() {
         ></div>
       </div>
 
-      {/* Middle section - Mission statement with Map Button */}
-      <div className="bg-white py-4 -mt-26 font-average relative">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          {(() => {
-            return (
-              <motion.div
-                ref={missionRef}
-                initial="hidden"
-                animate={missionControls}
-                variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.8, ease: "easeOut" },
-                  },
-                }}
-              >
-                <motion.p
-                  className="text-[#353E5C] text-lg font-medium leading-relaxed"
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: { duration: 0.8 },
-                    },
-                  }}
-                >
-                  Our commitment is to prioritize your health with expert guidance,
-                  <br />
-                  seamless medication management, and personalized care for
-                  <br />
-                  better well-being.
-                </motion.p>
-
-                <motion.div
-                  className="mt-6 flex justify-center items-center"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: { duration: 0.6, delay: 0.3 },
-                    },
-                  }}
-                >
-                  <motion.button
-                    onClick={toggleMap}
-                    className="group flex items-center"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <p className="text-gray-500 text-sm border-b border-gray-300 inline-block group-hover:text-[#3498db] group-hover:border-[#3498db] transition-colors duration-300">
-                      Want to learn more about Bishop Pharmacy?
-                      <motion.span
-                        className="inline-block ml-1"
-                        animate={{ x: showMap ? 5 : 0 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <ArrowRight className="inline-block h-3 w-3" />
-                      </motion.span>
-                    </p>
-                  </motion.button>
-                </motion.div>
-              </motion.div>
-            )
-          })()}
+      {/* Middle section - Mission statement with Map */}
+      <div className="bg-white py-8 -mt-26 font-average relative"></div>
+        <div className="max-w-5xl mx-auto text-center px-4">
+          <motion.div
+            ref={missionRef}
+            initial="hidden"
+            animate={missionControls}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.8, ease: "easeOut" },
+              },
+            }}
+          >
+            <motion.p
+              className="text-[#353E5C] text-lg font-medium leading-relaxed"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { duration: 0.8 },
+                },
+              }}
+            >
+              Our commitment is to prioritize your health with expert guidance,
+              <br />
+              seamless medication management, and personalized care for
+              <br />
+              better well-being.
+            </motion.p>
+          </motion.div>
         </div>
 
-        {/* Map Section */}
-        <AnimatePresence>
-          {showMap && (
-            <motion.div
-              className="max-w-4xl mx-auto mt-8 mb-4 px-4 relative"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-            >
-              <motion.div
-                className="relative rounded-xl overflow-hidden shadow-lg"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
+        {/* Map Section with Leaflet */}
+        {/* Map Section with Leaflet */}
+<motion.div
+  className="max-w-6xl mx-auto mt-8 mb-4 px-4 relative"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8 }}
+>
+  <div className="relative rounded-xl overflow-hidden shadow-xl border border-gray-200">
+    <div className="relative h-[400px] w-full">
+      {/* Leaflet Map Component */}
+      <LeafletMapComponent
+        location={pharmacyLocation}
+        onMarkerClick={toggleMapInfoCard}
+      />
+
+      {/* Map Info Card - shows when marker is clicked */}
+      <AnimatePresence>
+        {showMapInfoCard && (
+          <motion.div
+            className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg overflow-hidden w-[350px] sm:w-[400px] z-20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="relative h-[150px] w-full bg-[#E1F5E9]">
+              <Image 
+                src="/assets/map.webp" 
+                alt="Bishop's Waltham" 
+                fill 
+                className="object-cover" 
+              />
+              <button
+                onClick={toggleMapInfoCard}
+                className="absolute top-2 right-2 bg-white/70 p-1 rounded-full hover:bg-white transition-colors"
               >
-                {/* Map Header */}
-                <div className="absolute top-0 left-0 right-0 z-10 bg-[#00ACC1] text-white py-2 px-4 flex justify-between items-center">
-                  <span className="font-medium text-sm">Map: Towards Clinic</span>
-                  <motion.button
-                    onClick={toggleMap}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="text-white/80 hover:text-white"
-                  >
-                    <X size={18} />
-                  </motion.button>
-                </div>
-
-                {/* Map Content */}
-                <div className="relative h-[350px] w-full bg-[#E1F5E9]">
-                  {/* Map Background */}
-                  <Image
-                    src="/assets/map.png"
-                    alt="Map of Bishop's Waltham"
-                    fill
-                    className="object-cover"
-                  />
-
-                  {/* Location Popup */}
-                  <motion.div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg overflow-hidden w-[350px]"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 0.5, type: "spring" }}
-                  >
-                    <div className="relative h-[150px] w-full">
-                      <Image
-                        src="/assets/map.png"
-                        alt="Bishop's Waltham"
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                        0:54
-                      </div>
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-bold text-gray-800">Bishop's Waltham</h3>
-                      <p className="text-sm text-gray-600">Southampton, UK</p>
-                    </div>
-                    <div className="flex justify-between items-center px-3 py-2 border-t border-gray-100">
-                      <button className="text-[#3498db] text-sm font-medium">View details</button>
-                      <div className="w-8 h-8 bg-[#3498db]/10 rounded-full flex items-center justify-center">
-                        <MapPin className="h-4 w-4 text-[#3498db]" />
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                <X className="h-4 w-4 text-gray-700" />
+              </button>
+            </div>
+            <div className="p-4">
+              <h3 className="font-bold text-gray-800 text-lg">{pharmacyLocation.name}</h3>
+              <p className="text-sm text-gray-600 mb-2">10-12 High St, Bishop's Waltham, Southampton SO32 1AA, UK</p>
+              <div className="flex items-center text-sm text-gray-600 mb-1">
+                <svg
+                  className="h-4 w-4 mr-2 text-[#3498db]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  ></path>
+                </svg>
+                <span>01489 892381</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <svg
+                  className="h-4 w-4 mr-2 text-[#3498db]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span>Mon-Fri: 9:00 AM - 6:30 PM</span>
+              </div>
+            </div>
+            <div className="flex justify-between items-center px-4 py-3 border-t border-gray-100 bg-gray-50">
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacyLocation.lat},${pharmacyLocation.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#3498db] text-sm font-medium hover:underline flex items-center"
+              >
+                Get directions
+                <ArrowRight className="h-3 w-3 ml-1" />
+              </a>
+              <div className="w-8 h-8 bg-[#3498db]/10 rounded-full flex items-center justify-center">
+                <MapPin className="h-4 w-4 text-[#3498db]" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  </div>
+</motion.div>
 
       {/* Bottom section - Links and info */}
       <div className="bg-[#FAFAFF] py-16 relative overflow-hidden font-average">
@@ -523,6 +506,7 @@ export default function Footer() {
           />
         </motion.div>
 
+
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             {/* Logo and newsletter subscription - 4 columns */}
@@ -554,7 +538,7 @@ export default function Footer() {
                     }}
                   >
                     <img
-                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-KqM9lyZ7cXGNOPDyPXkGC3HkQdc1Zm.png"
+                      src="/assets/logo.webp"
                       alt="Bishops Waltham Pharmacy"
                       className="h-10"
                     />
@@ -614,172 +598,178 @@ export default function Footer() {
             {/* Empty space - 2 columns */}
             <div className="hidden md:block md:col-span-1"></div>
 
-            {/* Products column - 1.5 columns */}
-            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.1s" }}>
-              <h3 className="text-gray-800 font-medium mb-5 text-base">Products</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        For Microsuction
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Weight Loss
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Travel Care
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {/* Footer links section - mobile layout in 2 rows with 2 columns each */}
+            <div className="md:col-span-8 col-span-1">
+              {/* First row: Products and Solutions */}
+              <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
+                {/* Products column */}
+                <div className="animate-slideIn" style={{ animationDelay: "0.1s" }}>
+                  <h3 className="text-gray-800 font-medium mb-5 text-base">Products</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            For Microsuction
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Weight Loss
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Travel Care
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
 
-            {/* Solutions column - 1.5 columns */}
-            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.2s" }}>
-              <h3 className="text-gray-800 font-medium mb-5 text-base">Solutions</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Guides
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Vaccines
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Documentation
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+                {/* Solutions column */}
+                <div className="animate-slideIn" style={{ animationDelay: "0.2s" }}>
+                  <h3 className="text-gray-800 font-medium mb-5 text-base">Solutions</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Guides
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Vaccines
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Documentation
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
 
-            {/* Resources column - 1.5 columns */}
-            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.3s" }}>
-              <h3 className="text-gray-800 font-medium mb-5 text-base">Resources</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Blog
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Guides
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Webinars
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Documentation
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+                {/* Resources column */}
+                <div className="animate-slideIn" style={{ animationDelay: "0.3s" }}>
+                  <h3 className="text-gray-800 font-medium mb-5 text-base">Resources</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Blog
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Guides
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Webinars
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Documentation
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
 
-            {/* Company column - 1.5 columns */}
-            <div className="md:col-span-2 animate-slideIn" style={{ animationDelay: "0.4s" }}>
-              <h3 className="text-gray-800 font-medium mb-5 text-base">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        About Us
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Partners
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Privacy Policy
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                    <span className="relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                        Terms of Service
-                      </span>
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </Link>
-                </li>
-              </ul>
+                {/* Company column */}
+                <div className="animate-slideIn" style={{ animationDelay: "0.4s" }}>
+                  <h3 className="text-gray-800 font-medium mb-5 text-base">Company</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            About Us
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Partners
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Privacy Policy
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
+                        <span className="relative overflow-hidden">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                            Terms of Service
+                          </span>
+                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
+                        </span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>

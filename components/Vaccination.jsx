@@ -1,17 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
+import { fetchVaccines } from "@/lib/utils"
 
-const vaccineData = [
+// Keep initial placeholder data for loading state
+const initialVaccineData = [
   {
     id: "explore",
     type: "Injection",
     name: "Explore All",
     subText: "Vaccine",
-    image: "/assets/bv1.png",
+    image: "/assets/bv1.webp",
     price: null,
     featured: true,
   },
@@ -20,7 +22,7 @@ const vaccineData = [
     type: "Injection",
     name: "Rabies –",
     subText: "vaccination",
-    image: "/assets/bv2.png",
+    image: "/assets/bv2.webp",
     price: 200,
   },
   {
@@ -28,48 +30,55 @@ const vaccineData = [
     type: "Injection",
     name: "Hepatitis A –",
     subText: "vaccination",
-    image: "/assets/bv3.png",
+    image: "/assets/bv3.webp",
     price: 200,
   },
-  {
-    id: "japanese",
-    type: "Injection",
-    name: "Japanese –",
-    subText: "Encephalitis",
-    image: "/assets/bv5.png",
-    price: 200,
-  },
-  {
-    id: "dtp1",
-    type: "Injection",
-    name: "DTP –",
-    subText: "vaccination",
-    image: "/assets/bv3.png",
-    price: 200,
-  },
-  {
-    id: "hepatitisA2",
-    type: "Injection",
-    name: "Hepatitis A –",
-    subText: "vaccination",
-    image: "/assets/bv6.png",
-    price: 200,
-  },
-  {
-    id: "dtp2",
-    type: "Injection",
-    name: "DTP –",
-    subText: "vaccination",
-    image: "/assets/bv4.png",
-    price: 200,
-  },
+  // other entries remain for initial loading
+  // ... existing code ...
 ]
 
 export default function VaccinationComponent() {
   const [hoveredCard, setHoveredCard] = useState(null)
+  const [apiVaccines, setApiVaccines] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadVaccines() {
+      try {
+        // Fetch only available vaccines directly from the API
+        const vaccineList = await fetchVaccines("Available");
+        // Take just 6 vaccines for display (or fewer if there aren't 6 available)
+        setApiVaccines(vaccineList.slice(0, 6));
+      } catch (error) {
+        console.error("Failed to load vaccines:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadVaccines();
+  }, []);
+
+  // Transform API vaccines to the format expected by the UI
+  const transformedVaccines = [
+    initialVaccineData[0], // Keep the "Explore All" card
+    ...apiVaccines.map((vaccine, index) => ({
+      id: `api-${index}`,
+      type: "Injection",
+      name: vaccine.name,
+      subText: vaccine.compositions,
+      image: vaccine.pictureUrl || `/assets/bv${(index % 5) + 2}.webp`, // Fallback to local images
+      price: vaccine.price,
+      vaccineID: vaccine.vaccineID, // Include the vaccine ID
+      _original: vaccine._original || vaccine // Preserve original API data
+    }))
+  ]
+
+  // Use transformed API data if available, otherwise use initial data
+  const vaccineData = apiVaccines.length > 0 ? transformedVaccines : initialVaccineData
 
   return (
-    <div className="max-w-full w-[85%] mx-auto px-4 py-10 bg-white mt-10 ">
+    <div className="max-w-full w-[85%] mx-auto px-4 py-8 bg-white mt-10 ">
       <div className="text-center mb-8 font-average">
         <div className="inline-block border border-[#F2F2F2] rounded-full px-6 py-2 mb-4">
           <p className="text-xs tracking-wide uppercase font-medium bg-gradient-to-r from-[#4A9CEE] via-[#E18180] to-[#EE872A] text-transparent bg-clip-text">Best VACCINES FOR YOU</p>
@@ -86,7 +95,7 @@ export default function VaccinationComponent() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5 font-instrument">
         {/* Featured card (Explore All) - spans 6 columns */}
         <div className="md:col-span-6">
-          <Link href="/" className="block h-full">
+          <Link href="/vaccines" className="block h-full">
             <motion.div
               className="rounded-xl overflow-hidden relative h-[280px] font-instrument cursor-pointer w-full h-full"
               style={{
@@ -133,339 +142,187 @@ export default function VaccinationComponent() {
           </Link>
         </div>
 
-        {/* Rabies card - spans 3 columns */}
-        <div className="md:col-span-3">
-          <Link href="/vaccines" className="block h-full">
-            <motion.div
-              className="bg-[#e8f0fa] rounded-xl overflow-hidden relative h-[280px] font-instrument cursor-pointer w-full h-full"
-              whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.2 },
-              }}
-              onHoverStart={() => setHoveredCard("rabies")}
-              onHoverEnd={() => setHoveredCard(null)}
-            >
-              <div className="p-6 flex flex-col h-full font-instrument">
-                <div>
-                  <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[1].type}</p>
-                  <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[1].name}</h3>
-                  <h3 className="text-2xl font-bold text-[#7B8488]">{vaccineData[1].subText}</h3>
-                </div>
+        {/* First regular card - spans 3 columns */}
+        {vaccineData.length > 1 && (
+          <div className="md:col-span-3">
+            <Link href="/vaccines" className="block h-full">
+              <motion.div
+                className="bg-[#e8f0fa] rounded-xl overflow-hidden relative h-[280px] font-instrument cursor-pointer w-full h-full"
+                whileHover={{
+                  scale: 1.02,
+                  transition: { duration: 0.2 },
+                }}
+                onHoverStart={() => setHoveredCard(vaccineData[1].id)}
+                onHoverEnd={() => setHoveredCard(null)}
+              >
+                <div className="p-6 flex flex-col h-full font-instrument">
+                  <div>
+                    <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[1].type}</p>
+                    <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[1].name}</h3>
+                    <h3 className="text-2xl font-bold text-[#7B8488]">{vaccineData[1].subText}</h3>
+                  </div>
 
-                <div className="flex-grow flex items-center justify-center mt-10">
-                  <motion.div
-                    initial={{ y: 0, scale: 1 }}
-                    animate={{
-                      y: hoveredCard === "rabies" ? -10 : 0,
-                      scale: hoveredCard === "rabies" ? 1.1 : 1,
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <Image
-                      src={vaccineData[1].image || "/placeholder.svg"}
-                      alt="Rabies Vaccine"
-                      width={180}
-                      height={200}
-                      className="object-contain"
-                    />
-                  </motion.div>
-                </div>
+                  <div className="flex-grow flex items-center justify-center mt-10">
+                    <motion.div
+                      initial={{ y: 0, scale: 1 }}
+                      animate={{
+                        y: hoveredCard === vaccineData[1].id ? -10 : 0,
+                        scale: hoveredCard === vaccineData[1].id ? 1.1 : 1,
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <Image
+                        src={vaccineData[1].image || "/assets/bv2.webp"}
+                        alt={vaccineData[1].name}
+                        width={180}
+                        height={200}
+                        className="object-contain"
+                        onError={(e) => {
+                          e.target.src = "/assets/bv2.webp"; // Fallback image
+                        }}
+                      />
+                    </motion.div>
+                  </div>
 
-                <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
-                  <motion.div
-                    className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
-                    initial={{ scale: 1 }}
-                    animate={{
-                      scale: hoveredCard === "rabies" ? [1, 1.1, 1] : 1,
-                      transition: { repeat: hoveredCard === "rabies" ? Number.POSITIVE_INFINITY : 0, duration: 1 },
-                    }}
-                  >
-                    <span className="text-[#0D73A2] font-medium">${vaccineData[1].price}</span>
-                  </motion.div>
+                  <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
+                    <motion.div
+                      className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
+                      initial={{ scale: 1 }}
+                      animate={{
+                        scale: hoveredCard === vaccineData[1].id ? [1, 1.1, 1] : 1,
+                        transition: { repeat: hoveredCard === vaccineData[1].id ? Number.POSITIVE_INFINITY : 0, duration: 1 },
+                      }}
+                    >
+                      <span className="text-[#0D73A2] font-medium">${vaccineData[1].price}</span>
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </Link>
-        </div>
+              </motion.div>
+            </Link>
+          </div>
+        )}
 
-        {/* Hepatitis A card - spans 3 columns */}
-        <div className="md:col-span-3">
-          <Link href="/vaccines" className="block h-full">
-            <motion.div
-              className="bg-[#e8f0fa] rounded-xl overflow-hidden relative h-[280px] font-instrument cursor-pointer w-full h-full"
-              whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.2 },
-              }}
-              onHoverStart={() => setHoveredCard("hepatitisA")}
-              onHoverEnd={() => setHoveredCard(null)}
-            >
-              <div className="p-6 flex flex-col h-full font-instrument">
-                <div>
-                  <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[2].type}</p>
-                  <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[2].name}</h3>
-                  <h3 className="text-2xl font-bold text-[#7B8488]">{vaccineData[2].subText}</h3>
-                </div>
+        {/* Second regular card - spans 3 columns */}
+        {vaccineData.length > 2 && (
+          <div className="md:col-span-3">
+            <Link href="/vaccines" className="block h-full">
+              <motion.div
+                className="bg-[#e8f0fa] rounded-xl overflow-hidden relative h-[280px] font-instrument cursor-pointer w-full h-full"
+                whileHover={{
+                  scale: 1.02,
+                  transition: { duration: 0.2 },
+                }}
+                onHoverStart={() => setHoveredCard(vaccineData[2].id)}
+                onHoverEnd={() => setHoveredCard(null)}
+              >
+                <div className="p-6 flex flex-col h-full font-instrument">
+                  <div>
+                    <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[2].type}</p>
+                    <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[2].name}</h3>
+                    <h3 className="text-2xl font-bold text-[#7B8488]">{vaccineData[2].subText}</h3>
+                  </div>
 
-                <div className="flex-grow flex items-center justify-center ">
-                  <motion.div
-                    initial={{ y: 0, scale: 1 }}
-                    animate={{
-                      y: hoveredCard === "hepatitisA" ? -10 : 0,
-                      scale: hoveredCard === "hepatitisA" ? 1.1 : 1,
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <Image
-                      src={vaccineData[2].image || "/placeholder.svg"}
-                      alt="Hepatitis A Vaccine"
-                      width={120}
-                      height={120}
-                      className="object-contain"
-                    />
-                  </motion.div>
-                </div>
+                  <div className="flex-grow flex items-center justify-center ">
+                    <motion.div
+                      initial={{ y: 0, scale: 1 }}
+                      animate={{
+                        y: hoveredCard === vaccineData[2].id ? -10 : 0,
+                        scale: hoveredCard === vaccineData[2].id ? 1.1 : 1,
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <Image
+                        src={vaccineData[2].image || "/assets/bv3.webp"}
+                        alt={vaccineData[2].name}
+                        width={120}
+                        height={120}
+                        className="object-contain"
+                        onError={(e) => {
+                          e.target.src = "/assets/bv3.webp"; // Fallback image
+                        }}
+                      />
+                    </motion.div>
+                  </div>
 
-                <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
-                  <motion.div
-                    className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
-                    initial={{ scale: 1 }}
-                    animate={{
-                      scale: hoveredCard === "hepatitisA" ? [1, 1.1, 1] : 1,
-                      transition: { repeat: hoveredCard === "hepatitisA" ? Number.POSITIVE_INFINITY : 0, duration: 1 },
-                    }}
-                  >
-                    <span className="text-[#0D73A2] font-medium">${vaccineData[2].price}</span>
-                  </motion.div>
+                  <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
+                    <motion.div
+                      className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
+                      initial={{ scale: 1 }}
+                      animate={{
+                        scale: hoveredCard === vaccineData[2].id ? [1, 1.1, 1] : 1,
+                        transition: { repeat: hoveredCard === vaccineData[2].id ? Number.POSITIVE_INFINITY : 0, duration: 1 },
+                      }}
+                    >
+                      <span className="text-[#0D73A2] font-medium">${vaccineData[2].price}</span>
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </Link>
-        </div>
+              </motion.div>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Second row - 4 equal cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {/* Japanese Encephalitis card */}
-        <Link href="/vaccines">
-          <motion.div
-            className="bg-[#f5f5f7] rounded-xl overflow-hidden relative h-[260px] cursor-pointer"
-            whileHover={{
-              scale: 1.02,
-              transition: { duration: 0.2 },
-            }}
-            onHoverStart={() => setHoveredCard("japanese")}
-            onHoverEnd={() => setHoveredCard(null)}
-          >
-            <div className="p-6 flex flex-col h-full font-instrument">
-              <div>
-                <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[3].type}</p>
-                <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[3].name}</h3>
-                <p className="text-2xl font-bold text-[#7B8488]">{vaccineData[3].subText}</p>
-              </div>
+        {/* Render cards for indices 3-6 if they exist */}
+        {vaccineData.slice(3, 7).map((vaccine, idx) => (
+          <Link key={vaccine.id || idx} href="/vaccines">
+            <motion.div
+              className={`${idx % 2 === 0 ? "bg-[#f5f5f7]" : "bg-[#e8f0fa]"} rounded-xl overflow-hidden relative h-[260px] shadow-sm`}
+              whileHover={{
+                scale: 1.03,
+                transition: { duration: 0.2 },
+              }}
+              onHoverStart={() => setHoveredCard(vaccine.id)}
+              onHoverEnd={() => setHoveredCard(null)}
+            >
+              <div className="p-6 flex flex-col h-full">
+                <div>
+                  <p className="text-sm font-semibold text-[#0D73A2]">{vaccine.type}</p>
+                  <h3 className="text-xl font-bold text-[#7B8488] mt-1">{vaccine.name}</h3>
+                  <p className="text-xl font-bold text-[#7B8488]">{vaccine.subText}</p>
+                </div>
 
-              <div className="flex-grow flex items-center justify-center">
-                <motion.div
-                  initial={{ y: 0, scale: 1, rotate: 0 }}
-                  animate={{
-                    y: hoveredCard === "japanese" ? -8 : 0,
-                    scale: hoveredCard === "japanese" ? 1.15 : 1,
-                    rotate: hoveredCard === "japanese" ? 5 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  <Image
-                    src={vaccineData[3].image || "/placeholder.svg"}
-                    alt="Japanese Encephalitis Vaccine"
-                    width={100}
-                    height={100}
-                    className="object-contain"
-                  />
-                </motion.div>
-              </div>
+                <div className="flex-grow flex items-center justify-center">
+                  <motion.div
+                    initial={{ y: 0, scale: 1 }}
+                    animate={{
+                      y: hoveredCard === vaccine.id ? -10 : 0,
+                      scale: hoveredCard === vaccine.id ? 1.1 : 1,
+                      rotate: hoveredCard === vaccine.id && idx === 1 ? 5 : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    <Image
+                      src={vaccine.image || `/assets/bv${(idx % 4) + 2}.webp`}
+                      alt={vaccine.name}
+                      width={120}
+                      height={120}
+                      className="object-contain"
+                      onError={(e) => {
+                        e.target.src = `/assets/bv${(idx % 4) + 2}.webp`; // Fallback image
+                      }}
+                    />
+                  </motion.div>
+                </div>
 
-              <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
-                <motion.div
-                  className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
-                  initial={{ scale: 1 }}
-                  animate={{
-                    scale: hoveredCard === "japanese" ? [1, 1.1, 1] : 1,
-                    transition: { repeat: hoveredCard === "japanese" ? Number.POSITIVE_INFINITY : 0, duration: 1 },
-                  }}
-                >
-                  <span className="text-[#0D73A2] font-medium">${vaccineData[3].price}</span>
-                </motion.div>
+                <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
+                  <motion.div
+                    className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
+                    initial={{ scale: 1 }}
+                    animate={{
+                      scale: hoveredCard === vaccine.id ? [1, 1.1, 1] : 1,
+                      transition: { repeat: hoveredCard === vaccine.id ? Number.POSITIVE_INFINITY : 0, duration: 1 },
+                    }}
+                  >
+                    <span className="text-[#0D73A2] font-medium">${vaccine.price}</span>
+                  </motion.div>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        </Link>
-
-        {/* DTP card 1 */}
-        <Link href="/vaccines">
-          <motion.div
-            className="bg-[#f5f5f7] rounded-xl overflow-hidden relative h-[260px] cursor-pointer"
-            whileHover={{
-              scale: 1.02,
-              transition: { duration: 0.2 },
-            }}
-            onHoverStart={() => setHoveredCard("dtp1")}
-            onHoverEnd={() => setHoveredCard(null)}
-          >
-            <div className="p-6 flex flex-col h-full font-instrument">
-              <div>
-                <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[4].type}</p>
-                <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[4].name}</h3>
-                <p className="text-2xl font-bold text-[#7B8488]">{vaccineData[4].subText}</p>
-              </div>
-
-              <div className="flex-grow flex items-center justify-center">
-                <motion.div
-                  initial={{ y: 0, scale: 1, rotate: 0 }}
-                  animate={{
-                    y: hoveredCard === "dtp1" ? -8 : 0,
-                    scale: hoveredCard === "dtp1" ? 1.15 : 1,
-                    rotate: hoveredCard === "dtp1" ? -5 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  <Image
-                    src={vaccineData[4].image || "/placeholder.svg"}
-                    alt="DTP Vaccine"
-                    width={100}
-                    height={100}
-                    className="object-contain"
-                  />
-                </motion.div>
-              </div>
-
-              <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
-                <motion.div
-                  className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
-                  initial={{ scale: 1 }}
-                  animate={{
-                    scale: hoveredCard === "dtp1" ? [1, 1.1, 1] : 1,
-                    transition: { repeat: hoveredCard === "dtp1" ? Number.POSITIVE_INFINITY : 0, duration: 1 },
-                  }}
-                >
-                  <span className="text-[#0D73A2] font-medium">${vaccineData[4].price}</span>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </Link>
-
-        {/* Hepatitis A card 2 */}
-        <Link href="/vaccines">
-          <motion.div
-            className="bg-[#f5f5f7] rounded-xl overflow-hidden relative h-[260px] cursor-pointer"
-            whileHover={{
-              scale: 1.02,
-              transition: { duration: 0.2 },
-            }}
-            onHoverStart={() => setHoveredCard("hepatitisA2")}
-            onHoverEnd={() => setHoveredCard(null)}
-          >
-            <div className="p-6 flex flex-col h-full font-instrument">
-              <div>
-                <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[5].type}</p>
-                <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[5].name}</h3>
-                <p className="text-2xl font-bold text-[#7B8488]">{vaccineData[5].subText}</p>
-              </div>
-
-              <div className="flex-grow flex items-center justify-center">
-                <motion.div
-                  initial={{ y: 0, scale: 1, z: 0 }}
-                  animate={{
-                    y: hoveredCard === "hepatitisA2" ? -8 : 0,
-                    scale: hoveredCard === "hepatitisA2" ? 1.15 : 1,
-                    z: hoveredCard === "hepatitisA2" ? 20 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <Image
-                    src={vaccineData[5].image || "/placeholder.svg"}
-                    alt="Hepatitis A Vaccine"
-                    width={75}
-                    height={75}
-                    className="object-contain"
-                  />
-                </motion.div>
-              </div>
-
-              <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
-                <motion.div
-                  className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
-                  initial={{ scale: 1 }}
-                  animate={{
-                    scale: hoveredCard === "hepatitisA2" ? [1, 1.1, 1] : 1,
-                    transition: { repeat: hoveredCard === "hepatitisA2" ? Number.POSITIVE_INFINITY : 0, duration: 1 },
-                  }}
-                >
-                  <span className="text-[#0D73A2] font-medium">${vaccineData[5].price}</span>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </Link>
-
-        {/* DTP card 2 */}
-        <Link href="/vaccines">
-          <motion.div
-            className="bg-[#f5f5f7] rounded-xl overflow-hidden relative h-[260px] cursor-pointer"
-            whileHover={{
-              scale: 1.02,
-              transition: { duration: 0.2 },
-            }}
-            onHoverStart={() => setHoveredCard("dtp2")}
-            onHoverEnd={() => setHoveredCard(null)}
-          >
-            <div className="p-6 flex flex-col h-full">
-              <div>
-                <p className="text-sm font-semibold text-[#0D73A2]">{vaccineData[6].type}</p>
-                <h3  className="text-2xl font-bold text-[#7B8488] mt-1">{vaccineData[6].name}</h3>
-                <p className="text-2xl font-bold text-[#7B8488]">{vaccineData[6].subText}</p>
-              </div>
-
-              <div className="flex-grow flex items-center justify-center">
-                <motion.div
-                  initial={{ y: 0, scale: 1 }}
-                  animate={{
-                    y: hoveredCard === "dtp2" ? -8 : 0,
-                    scale: hoveredCard === "dtp2" ? 1.15 : 1,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 20,
-                    scale: { duration: 0.2 },
-                  }}
-                >
-                  <Image
-                    src={vaccineData[6].image || "/placeholder.svg"}
-                    alt="DTP Vaccine"
-                    width={100}
-                    height={100}
-                    className="object-contain"
-                  />
-                </motion.div>
-              </div>
-
-              <div className="flex justify-center absolute bottom-0 w-full text-center mb-2">
-                <motion.div
-                  className="bg-white/80 backdrop-blur-sm rounded-full px-8 py-1 w-32 inline-flex items-center justify-center shadow-sm"
-                  initial={{ scale: 1 }}
-                  animate={{
-                    scale: hoveredCard === "dtp2" ? [1, 1.1, 1] : 1,
-                    transition: { repeat: hoveredCard === "dtp2" ? Number.POSITIVE_INFINITY : 0, duration: 1 },
-                  }}
-                >
-                  <span className="text-[#0D73A2] font-medium">${vaccineData[6].price}</span>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </Link>
+            </motion.div>
+          </Link>
+        ))}
       </div>
     </div>
   )

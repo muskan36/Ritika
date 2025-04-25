@@ -128,6 +128,11 @@
   font-family: var(--font-inter), sans-serif !important;
 }
 
+.font-plusjakarta {
+  font-family: var(--font-plusjakarta), "Plus Jakarta Sans", sans-serif !important;
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

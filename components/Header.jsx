@@ -1,46 +1,35 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
-import {
-  Phone,
-  Mail,
-  Search,
-  Menu,
-  X,
-} from 'lucide-react';
+import { Phone, Mail, Search, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Logo from '../public/assets/logo.png';
+import Logo from '../public/assets/logo.webp';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
     <>
-      <header className="w-full bg-white shadow-sm px-6 py-5 flex justify-between items-center rounded-bl-3xl rounded-br-3xl z-50 relative font-instrument" >
+      <header className="w-full bg-white shadow-sm px-6 py-5 flex justify-between items-center rounded-bl-3xl rounded-br-3xl z-50 relative font-instrument">
 
         {/* Left: Logo + Nav */}
         <div className="flex items-center gap-16 pl-8">
+          <Link href="/">
+            <Image src={Logo} alt="Pharmacy Logo" width={90} height={30} className="object-contain" />
+          </Link>
 
-          <Image
-            src={Logo}
-            alt="Pharmacy Logo"
-            width={90}
-            height={30}
-            className="object-contain"
-          />
-
-          {/* Desktop Navigation */}
           <nav className="hidden lg:flex gap-10 text-sm font-medium text-black font-instrument">
-            <a href="#" className="hover:text-[#0B5C64]">Home</a>
-            <a href="#" className="hover:text-[#0B5C64]">Services</a>
-            <a href="#" className="hover:text-[#0B5C64]">Book Vaccination</a>
-            <a href="#" className="hover:text-[#0B5C64]">Locations</a>
-            <a href="#" className="hover:text-[#0B5C64]">About</a>
-            <a href="#" className="hover:text-[#0B5C64]">Help</a>
+            <a href="#home" className="hover:text-[#0B5C64]">Home</a>
+            <a href="#services" className="hover:text-[#0B5C64]">Services</a>
+            <a href="#vaccination" className="hover:text-[#0B5C64]">Book Vaccination</a>
+            <a href="#locations" className="hover:text-[#0B5C64]">Locations</a>
+            <a href="#about" className="hover:text-[#0B5C64]">About</a>
+            <a href="#faq" className="hover:text-[#0B5C64]">Help</a>
           </nav>
+
         </div>
 
         {/* Right: Contact + Icons */}
@@ -51,17 +40,17 @@ const Header = () => {
             </div>
             <div className="text-xs leading-4 text-black">
               <p className="font-bold">Phone Number</p>
-              <p className='font-medium text-[#4C4C4C]'>(650) 121-2132</p>
+              <p className="font-medium text-[#4C4C4C]">(650) 121-2132</p>
             </div>
           </div>
 
           <div className="hidden md:flex items-center gap-2">
             <div className="bg-[#037F91] p-2 rounded-full text-white">
-              <Mail size={18}  />
+              <Mail size={18} />
             </div>
             <div className="text-xs leading-4 text-black">
               <p className="font-bold">Email Us Here</p>
-              <p className='font-medium text-[#4C4C4C]'>example@gmail.com</p>
+              <p className="font-medium text-[#4C4C4C]">example@gmail.com</p>
             </div>
           </div>
 
@@ -88,12 +77,12 @@ const Header = () => {
             transition={{ type: 'tween', duration: 0.3 }}
             className="fixed top-0 right-0 h-full w-[80%] bg-white shadow-lg z-40 flex flex-col gap-6 px-6 py-10 text-gray-800"
           >
-            <a href="#" onClick={toggleMenu}>Home</a>
-            <a href="#" onClick={toggleMenu}>Services</a>
-            <a href="#" onClick={toggleMenu}>Book Vaccination</a>
-            <a href="#" onClick={toggleMenu}>Locations</a>
-            <a href="#" onClick={toggleMenu}>About</a>
-            <a href="#" onClick={toggleMenu}>Help</a>
+            <Link href="/" onClick={toggleMenu}>Home</Link>
+            <Link href="/services" onClick={toggleMenu}>Services</Link>
+            <Link href="/book-vaccination" onClick={toggleMenu}>Book Vaccination</Link>
+            <Link href="/locations" onClick={toggleMenu}>Locations</Link>
+            <Link href="/about" onClick={toggleMenu}>About</Link>
+            <Link href="/help" onClick={toggleMenu}>Help</Link>
           </motion.div>
         )}
       </AnimatePresence>
@@ -101,4 +90,4 @@ const Header = () => {
   );
 };
 
-export default Header;  
+export default Header;

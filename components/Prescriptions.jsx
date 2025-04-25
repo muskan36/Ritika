@@ -8,8 +8,8 @@ const prescriptions = [
   {
     title: "Smart Medication Insights",
     desc: "AI adjusts dosage & timing based on personal data",
-    image: "/assets/sp1.png",
-    backgroundIcon: "/assets/magnify.png",
+    image: "/assets/sp1.webp",
+    backgroundIcon: "/assets/magnify.webp",
     style: "items-center justify-center",
     gradient: "bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]",
     contentBottom: false,
@@ -17,7 +17,7 @@ const prescriptions = [
   {
     title: "Drug Interaction Alerts",
     desc: "AI detects harmful combinations",
-    image: "/assets/sp2.png",
+    image: "/assets/sp2.webp",
     style: "items-center justify-center",
     gradient: "bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]",
     contentBottom: false,
@@ -25,8 +25,8 @@ const prescriptions = [
   {
     title: "Seamless Pharmacy Integration From Doctors",
     desc: "Users connect directly with healthcare providers and pharmacies",
-    image: "/assets/sp3.png",
-    backgroundIcon: "/assets/sp3label.png",
+    image: "/assets/sp3.webp",
+    backgroundIcon: "/assets/sp3label.webp",
     style: "items-center justify-center",
     gradient: "bg-[linear-gradient(180deg,_#D8E6F9_0%,_#F3F5FF_100%)]",
     contentBottom: true,
@@ -36,7 +36,7 @@ const prescriptions = [
   {
     title: "Personalized Reminder",
     desc: "Context-aware notifications instead of rigid alarms",
-    image: "/assets/sp4.png",
+    image: "/assets/sp4.webp",
     style: "items-center justify-center",
     gradient: "bg-[linear-gradient(180deg,rgba(232,240,250,0.8)_0%,rgba(243,245,255,1)_100%)]",
     contentBottom: true,
@@ -225,7 +225,7 @@ const SmartPrescriptionSection = () => {
   }
 
   return (
-    <section ref={sectionRef} className="py-16 px-6 md:px-20 overflow-hidden font-average relative">
+    <section ref={sectionRef} className="py-12 px-6 md:px-20 overflow-hidden font-average relative">
       {/* Section header */}
       <motion.div
         className="text-center mb-16"
