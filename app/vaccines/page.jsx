@@ -156,7 +156,7 @@ export default function VaccinesPage() {
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center absolute bottom-0 left-0 right-0 px-6 py-3">
-                                        <span className="text-[#0D73A2] font-medium">${vaccine.price}</span>
+                                        <span className="text-[#0D73A2] font-medium">€{vaccine.price}</span>
                                         {vaccine.status === "Available" ? (
                                             <motion.button
                                                 whileHover={{ scale: 1.05 }}
@@ -233,7 +233,7 @@ export default function VaccinesPage() {
                                                     <p className="text-sm font-medium">{item.name}</p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-sm font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                                                    <p className="text-sm font-medium">€{(item.price * item.quantity).toFixed(2)}</p>
                                                     <button
                                                         onClick={() => removeFromCart(item.name)}
                                                         className="text-xs text-red-500 hover:text-red-700"
@@ -258,7 +258,7 @@ export default function VaccinesPage() {
                                                         <Plus className="w-3 h-3" />
                                                     </button>
                                                 </div>
-                                                <p className="text-xs text-gray-500">${item.price} each</p>
+                                                <p className="text-xs text-gray-500">€{item.price} each</p>
                                             </div>
                                         </div>
                                     </div>
@@ -269,16 +269,16 @@ export default function VaccinesPage() {
                                 <div className="space-y-3">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600">Subtotal ({cart.reduce((total, item) => total + item.quantity, 0)} items):</span>
-                                        <span className="font-medium">${subtotal.toFixed(2)}</span>
+                                        <span className="font-medium">€{subtotal.toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600">Tax (5%):</span>
-                                        <span className="font-medium">${tax.toFixed(2)}</span>
+                                        <span className="font-medium">€{tax.toFixed(2)}</span>
                                     </div>
                                     <div className="h-px bg-gray-200 my-2"></div>
                                     <div className="flex justify-between">
                                         <span className="font-semibold">Total:</span>
-                                        <span className="font-bold text-[#0D73A2]">${grandTotal.toFixed(2)}</span>
+                                        <span className="font-bold text-[#0D73A2]">€{grandTotal.toFixed(2)}</span>
                                     </div>
                                 </div>
 

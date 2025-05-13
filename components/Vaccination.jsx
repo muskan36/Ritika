@@ -201,7 +201,7 @@ export default function VaccinationComponent() {
                         transition: { repeat: hoveredCard === vaccineData[1].id ? Number.POSITIVE_INFINITY : 0, duration: 1 },
                       }}
                     >
-                      <span className="text-[#0D73A2] font-medium">${vaccineData[1].price}</span>
+                      <span className="text-[#0D73A2] font-medium">€{vaccineData[1].price}</span>
                     </motion.div>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function VaccinationComponent() {
                         transition: { repeat: hoveredCard === vaccineData[2].id ? Number.POSITIVE_INFINITY : 0, duration: 1 },
                       }}
                     >
-                      <span className="text-[#0D73A2] font-medium">${vaccineData[2].price}</span>
+                      <span className="text-[#0D73A2] font-medium">€{vaccineData[2].price}</span>
                     </motion.div>
                   </div>
                 </div>
@@ -324,7 +324,7 @@ export default function VaccinationComponent() {
                       transition: { repeat: hoveredCard === vaccine.id ? Number.POSITIVE_INFINITY : 0, duration: 1 },
                     }}
                   >
-                    <span className="text-[#0D73A2] font-medium">${vaccine.price}</span>
+                    <span className="text-[#0D73A2] font-medium">€{vaccine.price}</span>
                   </motion.div>
                 </div>
               </div>

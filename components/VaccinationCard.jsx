@@ -91,7 +91,7 @@ export default function VaccinationCard({ vaccine, isHovered, onHoverStart, onHo
                   transition: { repeat: isHovered ? Number.POSITIVE_INFINITY : 0, duration: 1 },
                 }}
               >
-                <span className="text-[#0D73A2] font-medium">${vaccine.price}</span>
+                <span className="text-[#0D73A2] font-medium">€{vaccine.price}</span>
               </motion.div>
             </div>
           )}
