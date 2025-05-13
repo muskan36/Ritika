@@ -6,17 +6,30 @@ import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCart, ChevronLeft, Plus, Check, Minus } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { fetchVaccines } from "@/lib/utils"
+import { fetchVaccines, fetchSlotsForDay } from "@/lib/utils"  // Import fetchSlotsForDay
+import { useCart } from "@/src/contexts/index"
 
 export default function VaccinesPage() {
     const [vaccines, setVaccines] = useState([])
     const [loading, setLoading] = useState(true)
-    const [cart, setCart] = useState([])
     const [hoveredCard, setHoveredCard] = useState(null)
+    const [bookingLoading, setBookingLoading] = useState(false)  // New state for booking button loading
     const router = useRouter()
+    
+    // Use the cart context instead of local state
+    const { 
+        cart, 
+        addToCart, 
+        removeFromCart, 
+        increaseQuantity, 
+        decreaseQuantity,
+        subtotal,
+        tax,
+        grandTotal
+    } = useCart()
 
     useEffect(() => {
-        window.scrollTo(0, 0) // ✅ Scroll to top on mount
+        window.scrollTo(0, 0) 
 
         async function loadVaccines() {
             try {
@@ -32,57 +45,36 @@ export default function VaccinesPage() {
         loadVaccines()
     }, [])
 
-    // Calculate totals based on quantities
-    const subtotal = cart.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0)
-    const tax = subtotal * 0.05
-    const grandTotal = subtotal + tax
-
-
-    const addToCart = (vaccine) => {
-        const existingItem = cart.find((item) => item.name === vaccine.name)
-        if (existingItem) {
-            setCart(cart.map(item =>
-                item.name === vaccine.name
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            ))
-        } else {
-            setCart([...cart, { 
-                ...vaccine, 
-                quantity: 1,
-                vaccineID: vaccine.vaccineID,
-                _original: vaccine._original || vaccine
-            }])
-        }
-    }
-
-    const removeFromCart = (vaccineName) => {
-        setCart(cart.filter((item) => item.name !== vaccineName))
-    }
-
-    const increaseQuantity = (vaccineName) => {
-        setCart(cart.map(item =>
-            item.name === vaccineName
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-        ))
-    }
-
-    const decreaseQuantity = (vaccineName) => {
-        setCart(cart.map(item =>
-            item.name === vaccineName
-                ? {
-                    ...item,
-                    quantity: item.quantity > 1 ? item.quantity - 1 : 1
-                }
-                : item
-        ))
-    }
-
-    const handleBooking = () => {
+    const handleBooking = async () => {
         if (cart.length > 0) {
-            localStorage.setItem('vaccineCart', JSON.stringify(cart))
-            router.push('/booking')
+            setBookingLoading(true)
+            try {
+                // Prefetch slots for today's date
+                const today = new Date()
+                const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+                
+                const slotsResult = await fetchSlotsForDay(formattedDate)
+                
+                // Store the prefetched slots in localStorage for the booking page to use
+                if (slotsResult.success && slotsResult.data) {
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem('prefetchedSlots', JSON.stringify({
+                            date: formattedDate,
+                            slotsData: slotsResult.data,
+                            timestamp: new Date().getTime()
+                        }))
+                    }
+                }
+                
+                // Navigate to booking page
+                router.push('/booking')
+            } catch (error) {
+                console.error("Failed to prefetch slots:", error)
+                // Still navigate to booking page even if prefetch fails
+                router.push('/booking')
+            } finally {
+                setBookingLoading(false)
+            }
         }
     }
 
@@ -294,10 +286,20 @@ export default function VaccinesPage() {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     className="w-full bg-[#0D73A2] text-white font-medium py-3 rounded-lg mt-6 flex items-center justify-center disabled:bg-gray-300 disabled:cursor-not-allowed"
-                                    disabled={cart.length === 0}
+                                    disabled={cart.length === 0 || bookingLoading}
                                     onClick={handleBooking}
                                 >
-                                    Proceed to Booking
+                                    {bookingLoading ? (
+                                        <>
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Preparing Booking...
+                                        </>
+                                    ) : (
+                                        "Proceed to Booking"
+                                    )}
                                 </motion.button>
                             </div>
                         </>

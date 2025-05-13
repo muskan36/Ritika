@@ -14,7 +14,7 @@ const whyChooseContent = [
       "Personal relationships with our customers",
       "Deeply rooted in Bishops Waltham"
     ],
-    image: "/assets/whychoseus1.webp", 
+    image: "/assets/whychoseus1.webp",
   },
   {
     title: "Personalized Healthcare Service",
@@ -280,20 +280,18 @@ export default function WhyChooseUs() {
                     <div key={index} className="flex items-center">
                       {index > 0 && (
                         <div
-                          className={`h-[1px] w-[64px] transition-colors duration-500 ${
-                            currentSlide >= index ? "bg-cyan-500" : "bg-gray-300"
-                          }`}
+                          className={`h-[1px] w-[64px] transition-colors duration-500 ${currentSlide >= index ? "bg-cyan-500" : "bg-gray-300"
+                            }`}
                         ></div>
                       )}
                       <button
                         onClick={() => handleDotClick(index)}
-                        className={`relative flex items-center justify-center h-6 w-6 rounded-full transition-all duration-500 ${
-                          currentSlide === index
+                        className={`relative flex items-center justify-center h-6 w-6 rounded-full transition-all duration-500 ${currentSlide === index
                             ? "bg-cyan-500 shadow-md shadow-cyan-200"
                             : currentSlide > index
                               ? "bg-cyan-500"
                               : "bg-gray-300"
-                        }`}
+                          }`}
                         aria-label={`Go to slide ${index + 1}`}
                       >
                         <span className="h-2 w-2 bg-white rounded-full"></span>
@@ -382,6 +380,12 @@ export default function WhyChooseUs() {
                     animate="visible"
                     whileHover="hover"
                     whileTap="tap"
+                    onClick={() => {
+                      const blogsSection = document.getElementById('blogs');
+                      if (blogsSection) {
+                        blogsSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
                   >
                     <motion.span className="absolute inset-0 bg-gradient-to-r from-blue-100/40 to-purple-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <span className="pr-3 relative z-10">See How it Works</span>

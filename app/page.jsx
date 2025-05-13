@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import AboutUs from "@/components/AboutUs"
 import BlogResources from "@/components/Blogs"
@@ -13,24 +13,39 @@ import TravelClinic from "@/components/TravelClinic"
 import VaccinationComponent from "@/components/Vaccination"
 import WhyChooseUs from "@/components/WhyChooseUs"
 import LoadingAnimation from "@/components/LoadingAnimation"
+import { useAuth, useCart, useApp } from "@/src/contexts/index"
 
 export default function Home() {
   const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
+  const { cart } = useCart()
+  const { addNotification } = useApp()
 
-  // Check if this is the first visit in this session
+  // Handle first visit check
   useEffect(() => {
     const hasVisited = sessionStorage.getItem("hasVisited")
     if (hasVisited) {
       setLoading(false)
     } else {
-      // Set the flag for future navigation within the same session
       sessionStorage.setItem("hasVisited", "true")
     }
-  }, [])
+  }, []) // Empty dependency array since this should only run once
 
-  const handleLoadingComplete = () => {
+  // Handle welcome notification separately
+  useEffect(() => {
+    if (user && !sessionStorage.getItem("welcomeNotificationShown")) {
+      addNotification({
+        title: "Welcome back!",
+        message: `Good to see you again, ${user.name || "valued customer"}!`,
+        type: "success"
+      })
+      sessionStorage.setItem("welcomeNotificationShown", "true")
+    }
+  }, [user, addNotification])
+
+  const handleLoadingComplete = useCallback(() => {
     setLoading(false)
-  }
+  }, [])
 
   return (
     <>
@@ -47,7 +62,7 @@ export default function Home() {
             <DoctorTestimonial />
             <section id="vaccination"><VaccinationComponent /></section>
             <section id="faq"><FAQComponent /></section>
-            <BlogResources />
+            <section id="blogs"><BlogResources /></section>
             <Footer />
           </motion.div>
         )}

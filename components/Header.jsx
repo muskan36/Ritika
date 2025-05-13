@@ -3,18 +3,19 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Phone, Mail, Search, Menu, X } from 'lucide-react';
+import { Phone, Mail, Search, Menu, X, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from '../public/assets/logo.webp';
+import { useAuth } from "@/src/contexts/AuthContext"; // Import useAuth
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(!menuOpen);
+  const { user, isAuthenticated, logout } = useAuth(); // Get auth context
 
   return (
     <>
       <header className="w-full bg-white shadow-sm px-6 py-5 flex justify-between items-center rounded-bl-3xl rounded-br-3xl z-50 relative font-instrument">
-
         {/* Left: Logo + Nav */}
         <div className="flex items-center gap-16 pl-8">
           <Link href="/">
@@ -29,7 +30,6 @@ const Header = () => {
             <a href="#about" className="hover:text-[#0B5C64]">About</a>
             <a href="#faq" className="hover:text-[#0B5C64]">Help</a>
           </nav>
-
         </div>
 
         {/* Right: Contact + Icons */}
@@ -58,6 +58,21 @@ const Header = () => {
             <Search />
           </div>
 
+          {/* Logout button - only shown when authenticated and hidden on mobile */}
+          {isAuthenticated && (
+            <div 
+              className="hidden md:flex text-2xl text-[#0B5C64] cursor-pointer hover:text-red-500 transition-colors"
+              onClick={() => {
+                logout();
+                // Optional: Redirect to home page after logout
+                window.location.href = "/";
+              }}
+              title="Logout"
+            >
+              <LogOut size={20} />
+            </div>
+          )}
+
           <div
             className="text-2xl text-[#0B5C64] cursor-pointer lg:hidden"
             onClick={toggleMenu}
@@ -83,6 +98,18 @@ const Header = () => {
             <Link href="/locations" onClick={toggleMenu}>Locations</Link>
             <Link href="/about" onClick={toggleMenu}>About</Link>
             <Link href="/help" onClick={toggleMenu}>Help</Link>
+            {isAuthenticated && (
+              <button 
+                onClick={() => {
+                  logout();
+                  toggleMenu();
+                  window.location.href = "/";
+                }}
+                className="text-red-500 flex items-center gap-2"
+              >
+                <LogOut size={16} /> Logout
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

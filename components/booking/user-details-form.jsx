@@ -4,7 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, User, Phone, CreditCard } from "lucide-react"
 
-export default function UserDetailsForm({ onSubmit, onBack }) {
+export default function UserDetailsForm({ onSubmit, onBack, loading = false }) {
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -33,10 +33,6 @@ export default function UserDetailsForm({ onSubmit, onBack }) {
     const newErrors = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = "Patient name is required"
-    }
-
-    if (!formData.mobile.trim()) {  
       newErrors.name = "Patient name is required"
     }
 
@@ -99,6 +95,7 @@ export default function UserDetailsForm({ onSubmit, onBack }) {
                 className={`w-full px-4 py-3 bg-white border ${
                   errors.name ? "border-red-500" : "border-gray-100"
                 } rounded-lg focus:outline-none shadow-sm`}
+                disabled={loading}
               />
             </motion.div>
             {errors.name && (
@@ -139,6 +136,7 @@ export default function UserDetailsForm({ onSubmit, onBack }) {
                 className={`w-full px-4 py-3 bg-white border ${
                   errors.mobile ? "border-red-500" : "border-gray-100"
                 } rounded-lg focus:outline-none shadow-sm`}
+                disabled={loading}
               />
             </motion.div>
             {errors.mobile && (
@@ -179,6 +177,7 @@ export default function UserDetailsForm({ onSubmit, onBack }) {
                 className={`w-full px-4 py-3 bg-white border ${
                   errors.payment ? "border-red-500" : "border-gray-100"
                 } rounded-lg focus:outline-none shadow-sm`}
+                disabled={loading}
               />
             </motion.div>
             {errors.payment && (
@@ -203,7 +202,8 @@ export default function UserDetailsForm({ onSubmit, onBack }) {
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={onBack}
-          className="flex-1 py-3 border border-[#00ACC1] text-[#00ACC1] rounded-xl font-medium flex items-center justify-center hover:bg-[#E8F5F7] transition-colors duration-300"
+          disabled={loading}
+          className="flex-1 py-3 border border-[#00ACC1] text-[#00ACC1] rounded-xl font-medium flex items-center justify-center hover:bg-[#E8F5F7] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronLeft size={16} className="mr-1" /> Back
         </motion.button>
@@ -213,9 +213,20 @@ export default function UserDetailsForm({ onSubmit, onBack }) {
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleSubmit}
-          className="flex-1 py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300"
+          disabled={loading}
+          className="flex-1 py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
         >
-          Continue <ChevronRight size={16} className="ml-1 inline-block" />
+          {loading ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Processing...
+            </>
+          ) : (
+            <>Continue <ChevronRight size={16} className="ml-1 inline-block" /></>
+          )}
         </motion.button>
       </div>
     </div>

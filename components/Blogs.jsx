@@ -9,6 +9,7 @@ export default function BlogResources() {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
   const [hasAnimated, setHasAnimated] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
 
   // For parallax scrolling effect
   const { scrollYProgress } = useScroll({
@@ -25,6 +26,14 @@ export default function BlogResources() {
       setHasAnimated(true)
     }
   }, [isInView, hasAnimated])
+
+  // Handle view all articles click
+  const handleViewAllClick = () => {
+    setShowNotification(true)
+    setTimeout(() => {
+      setShowNotification(false)
+    }, 3000)
+  }
 
   // Animation variants
   const containerVariants = {
@@ -79,6 +88,12 @@ export default function BlogResources() {
     },
   }
 
+  const notificationVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
+  }
+
   const blogPosts = [
     {
       id: 1,
@@ -123,12 +138,35 @@ export default function BlogResources() {
   return (
     <motion.div
       ref={sectionRef}
-      className="w-full py-10 px-4 bg-gradient-to-b overflow-hidden font-plusjakarta"
+      className="w-full py-10 px-4 bg-gradient-to-b overflow-hidden font-plusjakarta relative"
       style={{ opacity }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
+      {/* Notification */}
+      {showNotification && (
+        <motion.div
+          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-[#037F91] text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={notificationVariants}
+          transition={{ duration: 0.3 }}
+        >
+          <span>Currently showing all available articles</span>
+          <button 
+            onClick={() => setShowNotification(false)}
+            className="ml-2 p-1 rounded-full hover:bg-white/20"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </motion.div>
+      )}
+
       {/* Decorative elements */}
       <div className="absolute left-0 top-0 w-full h-32 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
       <motion.div
@@ -225,35 +263,26 @@ export default function BlogResources() {
           The latest industry news, interviews, technologies, and resources to help you make informed health decisions.
         </motion.p>
 
-        {/* Search Bar with floating animation */}
-        <motion.div
-          variants={itemVariants}
-          className="max-w-md mx-auto mb-16"
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#037F91] h-5 w-5" />
-            <input
-              type="text"
-              placeholder="Search articles, topics, or authors..."
-              className="w-full pl-12 pr-4 py-4 border-none focus:outline-none focus:ring-2 focus:ring-[#037F91]/20 text-gray-700"
-            />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#037F91] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#026a78] transition-colors">
-              Search
-            </button>
-          </div>
-        </motion.div>
-
         {/* Blog Cards with staggered animation */}
         <div className="grid md:grid-cols-3 gap-8 font-plusjakarta">
           {blogPosts.map((post, index) => (
-            <motion.div
+            <motion.a
               key={post.id}
               custom={index}
               variants={cardVariants}
               whileHover="hover"
-              className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group"
+              className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group block"
+              href={
+                post.id === 1
+                  ? "https://www.medicalnewstoday.com/articles/303409"
+                  : post.id === 2
+                    ? "https://www.healthline.com/health/microsuction"
+                    : post.id === 3
+                      ? "https://www.msdmanuals.com/home/multimedia/table/vaccines-for-international-travel"
+                      : "#"
+              }
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="relative h-52 overflow-hidden">
                 <motion.div className="absolute inset-0 bg-gradient-to-t from-[#037F91]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></motion.div>
@@ -309,7 +338,7 @@ export default function BlogResources() {
                   <span className="text-xs text-gray-500">{post.readTime}</span>
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
 
@@ -319,6 +348,7 @@ export default function BlogResources() {
             className="bg-[#E6F4F6] text-[#037F91] px-6 py-3 rounded-xl flex items-center gap-2 font-medium hover:bg-[#d0ebef] transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
+            onClick={handleViewAllClick}
           >
             View all articles
             <ChevronRight className="w-5 h-5" />

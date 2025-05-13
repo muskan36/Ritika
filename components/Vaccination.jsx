@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
@@ -33,14 +33,22 @@ const initialVaccineData = [
     image: "/assets/bv3.webp",
     price: 200,
   },
-  // other entries remain for initial loading
-  // ... existing code ...
+  
 ]
 
 export default function VaccinationComponent() {
   const [hoveredCard, setHoveredCard] = useState(null)
   const [apiVaccines, setApiVaccines] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Memoize the hover handlers
+  const handleHoverStart = useCallback((id) => {
+    setHoveredCard(id)
+  }, [])
+
+  const handleHoverEnd = useCallback(() => {
+    setHoveredCard(null)
+  }, [])
 
   useEffect(() => {
     async function loadVaccines() {
@@ -105,8 +113,8 @@ export default function VaccinationComponent() {
                 scale: 1.02,
                 transition: { duration: 0.2 },
               }}
-              onHoverStart={() => setHoveredCard("explore")}
-              onHoverEnd={() => setHoveredCard(null)}
+              onHoverStart={() => handleHoverStart("explore")}
+              onHoverEnd={handleHoverEnd}
             >
               <div className="p-10 flex flex-col h-full font-instrument">
                 <div>
@@ -152,8 +160,8 @@ export default function VaccinationComponent() {
                   scale: 1.02,
                   transition: { duration: 0.2 },
                 }}
-                onHoverStart={() => setHoveredCard(vaccineData[1].id)}
-                onHoverEnd={() => setHoveredCard(null)}
+                onHoverStart={() => handleHoverStart(vaccineData[1].id)}
+                onHoverEnd={handleHoverEnd}
               >
                 <div className="p-6 flex flex-col h-full font-instrument">
                   <div>
@@ -212,8 +220,8 @@ export default function VaccinationComponent() {
                   scale: 1.02,
                   transition: { duration: 0.2 },
                 }}
-                onHoverStart={() => setHoveredCard(vaccineData[2].id)}
-                onHoverEnd={() => setHoveredCard(null)}
+                onHoverStart={() => handleHoverStart(vaccineData[2].id)}
+                onHoverEnd={handleHoverEnd}
               >
                 <div className="p-6 flex flex-col h-full font-instrument">
                   <div>
@@ -274,8 +282,8 @@ export default function VaccinationComponent() {
                 scale: 1.03,
                 transition: { duration: 0.2 },
               }}
-              onHoverStart={() => setHoveredCard(vaccine.id)}
-              onHoverEnd={() => setHoveredCard(null)}
+              onHoverStart={() => handleHoverStart(vaccine.id)}
+              onHoverEnd={handleHoverEnd}
             >
               <div className="p-6 flex flex-col h-full">
                 <div>

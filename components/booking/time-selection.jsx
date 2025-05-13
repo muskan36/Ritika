@@ -1,193 +1,217 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Clock } from "lucide-react"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { ChevronDown, ChevronUp, ChevronLeft, Clock, XCircle } from "lucide-react";
+import { fetchSlotsForDay } from "@/lib/utils";
 
-// Time slot data
-const timeSlots = {
-  morning: [
-    { id: 1, time: "09:00" },
-    { id: 2, time: "09:20" },
-    { id: 3, time: "09:45" },
-    { id: 4, time: "10:00" },
-    { id: 5, time: "10:15" },
-  ],
-  afternoon: [
-    { id: 6, time: "12:00" },
-    { id: 7, time: "12:30" },
-    { id: 8, time: "13:15" },
-    { id: 9, time: "14:00" },
-    { id: 10, time: "14:45" },
-  ],
-  evening: [
-    { id: 11, time: "16:00" },
-    { id: 12, time: "16:30" },
-    { id: 13, time: "17:00" },
-    { id: 14, time: "17:30" },
-    { id: 15, time: "18:00" },
-  ],
-}
+export default function TimeSelection({ onTimeSelect, onBack, selectedDate, preloadedSlots }) {
+  const [expandedSection, setExpandedSection] = useState("morning");
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [timeSlots, setTimeSlots] = useState({
+    morning: [],
+    afternoon: [],
+    evening: [],
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isBooking, setIsBooking] = useState(false);
 
-export default function TimeSelection({ onTimeSelect, onBack }) {
-  const [expandedSection, setExpandedSection] = useState("morning")
-  const [selectedTime, setSelectedTime] = useState(null)
+  // Use preloaded slots if available, otherwise fetch them
+  useEffect(() => {
+    if (preloadedSlots) {
+      processSlots(preloadedSlots);
+    } else {
+      loadTimeSlots();
+    }
+  }, [preloadedSlots]);
+
+  const processSlots = (slotData) => {
+    if (!slotData || !slotData.slotList) {
+      setError("Invalid slot data format");
+      return;
+    }
+
+    const slotList = slotData.slotList || {};
+    
+    // Include all slots (both Available and Booked)
+    const categorized = {
+      morning: Object.entries(slotList.morning || {})
+        .map(([time, status]) => {
+          const [timePart, meridiem] = time.split(" ");
+          return {
+            slot: timePart,
+            meridiem,
+            displayTime: time,
+            status: status
+          };
+        }),
+      
+      afternoon: Object.entries(slotList.afternoon || {})
+        .map(([time, status]) => {
+          const [timePart, meridiem] = time.split(" ");
+          return {
+            slot: timePart,
+            meridiem,
+            displayTime: time,
+            status: status
+          };
+        }),
+      
+      evening: Object.entries(slotList.evening || {})
+        .map(([time, status]) => {
+          const [timePart, meridiem] = time.split(" ");
+          return {
+            slot: timePart,
+            meridiem,
+            displayTime: time,
+            status: status
+          };
+        }),
+    };
+    
+    setTimeSlots(categorized);
+    setLoading(false);
+  };
+
+  const loadTimeSlots = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      // Use the selected date or today's date as fallback
+      const date = selectedDate || new Date();
+      const formattedDate = typeof date === 'string' 
+        ? date 
+        : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      
+      console.log("Fetching slots for date:", formattedDate);
+      const result = await fetchSlotsForDay(formattedDate);
+      
+      if (result.success && result.data) {
+        console.log("Slots fetched successfully:", result.data);
+        processSlots(result.data);
+      } else {
+        console.error("Failed to fetch slots:", result.message);
+        setError(result.message || "Failed to fetch available time slots");
+      }
+    } catch (err) {
+      console.error("Error loading time slots:", err);
+      setError("An error occurred while loading available times. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleSection = (section) => {
-    setExpandedSection(expandedSection === section ? null : section)
-  }
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
-  const handleTimeClick = (time) => {
-    setSelectedTime(time)
-  }
-
-  const handleContinue = () => {
-    if (selectedTime) {
-      onTimeSelect(selectedTime)
+  const handleTimeClick = (time, meridiem, status) => {
+    // Only allow selection if status is Available
+    if (status === "Available") {
+      const fullTime = meridiem ? `${time} ${meridiem}` : time;
+      setSelectedTime(fullTime);
     }
-  }
+  };
+
+  const handleContinue = async () => {
+    if (selectedTime) {
+      setIsBooking(true); // Set loading state
+      try {
+        await onTimeSelect(selectedTime);
+      } catch (err) {
+        console.error("Error in time selection:", err);
+        setError("Failed to proceed with booking. Please try again.");
+      } finally {
+        setIsBooking(false); // Reset loading state
+      }
+    }
+  };
 
   return (
     <div className="p-6 pt-2">
-      <div className="border  p-6 rounded-xl">
-
-        {/* Morning section */}
-        <div className="mb-4">
-          <motion.button
-            onClick={() => toggleSection("morning")}
-            className="w-full flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+          {error}
+          <button 
+            onClick={loadTimeSlots} 
+            className="ml-2 underline text-xs font-medium"
           >
-            <span className="font-medium text-gray-700">Morning</span>
-            <div className="flex items-center">
-              <span className="text-xs text-gray-400 mr-2">09:00 - 11:00</span>
-              {expandedSection === "morning" ? (
-                <ChevronUp size={18} className="text-[#00ACC1]" />
-              ) : (
-                <ChevronDown size={18} className="text-gray-400" />
-              )}
-            </div>
-          </motion.button>
-
-          {expandedSection === "morning" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="mt-2 grid grid-cols-5 gap-2"
-            >
-              {timeSlots.morning.map((slot) => (
-                <motion.button
-                  key={slot.id}
-                  whileHover={{ scale: 1.05, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleTimeClick(slot.time)}
-                  className={`py-2 px-2 text-xs rounded-lg border ${
-                    selectedTime === slot.time
-                      ? "bg-gradient-to-r from-[#00ACC1] to-[#0097A7] text-white border-transparent shadow-md"
-                      : "bg-white text-gray-700 border-gray-100 hover:border-[#00ACC1]/30 shadow-sm"
-                  } transition-all duration-200`}
-                >
-                  {slot.time}
-                </motion.button>
-              ))}
-            </motion.div>
-          )}
+            Try Again
+          </button>
         </div>
-
-        {/* Afternoon section */}
-        <div className="mb-4">
-          <motion.button
-            onClick={() => toggleSection("afternoon")}
-            className="w-full flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
-          >
-            <span className="font-medium text-gray-700">Afternoon</span>
-            <div className="flex items-center">
-              <span className="text-xs text-gray-400 mr-2">12:00 - 15:00</span>
-              {expandedSection === "afternoon" ? (
-                <ChevronUp size={18} className="text-[#00ACC1]" />
-              ) : (
-                <ChevronDown size={18} className="text-gray-400" />
-              )}
-            </div>
-          </motion.button>
-
-          {expandedSection === "afternoon" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="mt-2 grid grid-cols-5 gap-2"
+      )}
+      
+      <div className="border p-4 rounded-xl">
+        {["morning", "afternoon", "evening"].map((period) => (
+          <div className="mb-4" key={period}>
+            <motion.button
+              onClick={() => toggleSection(period)}
+              className="w-full flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
+              whileHover={{ y: -1 }}
+              whileTap={{ y: 0 }}
             >
-              {timeSlots.afternoon.map((slot) => (
-                <motion.button
-                  key={slot.id}
-                  whileHover={{ scale: 1.05, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleTimeClick(slot.time)}
-                  className={`py-2 px-2 text-xs rounded-lg border ${
-                    selectedTime === slot.time
-                      ? "bg-gradient-to-r from-[#00ACC1] to-[#0097A7] text-white border-transparent shadow-md"
-                      : "bg-white text-gray-700 border-gray-100 hover:border-[#00ACC1]/30 shadow-sm"
-                  } transition-all duration-200`}
-                >
-                  {slot.time}
-                </motion.button>
-              ))}
-            </motion.div>
-          )}
-        </div>
+              <span className="font-medium text-gray-700 capitalize flex items-center">
+                <Clock size={14} className="mr-2 text-[#00ACC1]" />
+                {period}
+              </span>
+              <div className="flex items-center">
+                {expandedSection === period ? (
+                  <ChevronUp size={18} className="text-[#00ACC1]" />
+                ) : (
+                  <ChevronDown size={18} className="text-gray-400" />
+                )}
+              </div>
+            </motion.button>
 
-        {/* Evening section */}
-        <div className="mb-4">
-          <motion.button
-            onClick={() => toggleSection("evening")}
-            className="w-full flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
-          >
-            <span className="font-medium text-gray-700">Evening</span>
-            <div className="flex items-center">
-              <span className="text-xs text-gray-400 mr-2">16:00 - 18:00</span>
-              {expandedSection === "evening" ? (
-                <ChevronUp size={18} className="text-[#00ACC1]" />
-              ) : (
-                <ChevronDown size={18} className="text-gray-400" />
-              )}
-            </div>
-          </motion.button>
-
-          {expandedSection === "evening" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="mt-2 grid grid-cols-5 gap-2"
-            >
-              {timeSlots.evening.map((slot) => (
-                <motion.button
-                  key={slot.id}
-                  whileHover={{ scale: 1.05, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleTimeClick(slot.time)}
-                  className={`py-2 px-2 text-xs rounded-lg border ${
-                    selectedTime === slot.time
-                      ? "bg-gradient-to-r from-[#00ACC1] to-[#0097A7] text-white border-transparent shadow-md"
-                      : "bg-white text-gray-700 border-gray-100 hover:border-[#00ACC1]/30 shadow-sm"
-                  } transition-all duration-200`}
-                >
-                  {slot.time}
-                </motion.button>
-              ))}
-            </motion.div>
-          )}
-        </div>
+            {expandedSection === period && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                transition={{ duration: 0.2 }}
+                className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-2"
+              >
+                {loading ? (
+                  <div className="text-center text-gray-400 text-sm col-span-full p-4">
+                    <div className="animate-pulse flex justify-center">
+                      <div className="h-4 w-4 bg-gray-200 rounded-full mr-1"></div>
+                      <div className="h-4 w-4 bg-gray-300 rounded-full mr-1"></div>
+                      <div className="h-4 w-4 bg-gray-200 rounded-full"></div>
+                    </div>
+                    <p className="mt-2">Loading available times...</p>
+                  </div>
+                ) : timeSlots[period].length > 0 ? (
+                  timeSlots[period].map((slot, idx) => (
+                    <motion.button
+                      key={`${slot.slot}-${slot.meridiem}-${idx}`}
+                      whileHover={slot.status === "Available" ? { scale: 1.05, y: -1 } : {}}
+                      whileTap={slot.status === "Available" ? { scale: 0.95 } : {}}
+                      onClick={() => handleTimeClick(slot.slot, slot.meridiem, slot.status)}
+                      disabled={slot.status !== "Available"}
+                      className={`py-2 px-2 text-xs rounded-lg border relative ${
+                        selectedTime === slot.displayTime
+                          ? "bg-gradient-to-r from-[#00ACC1] to-[#0097A7] text-white border-transparent shadow-md"
+                          : slot.status === "Available"
+                            ? "bg-white text-gray-700 border-gray-100 hover:border-[#00ACC1]/30 shadow-sm"
+                            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-70"
+                      } transition-all duration-200`}
+                    >
+                      {slot.displayTime}
+                      {slot.status !== "Available" && (
+                        <XCircle className="absolute -top-1 -right-1 w-3 h-3 text-red-500 bg-white rounded-full" />
+                      )}
+                    </motion.button>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-400 text-sm col-span-full p-4">
+                    No slots available for this time period
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Selected time indicator */}
@@ -211,7 +235,8 @@ export default function TimeSelection({ onTimeSelect, onBack }) {
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={onBack}
-          className="flex-1 py-3 border border-[#00ACC1] text-[#00ACC1] rounded-xl font-medium flex items-center justify-center hover:bg-[#E8F5F7] transition-colors duration-300"
+          disabled={isBooking}
+          className="flex-1 py-3 border border-[#00ACC1] text-[#00ACC1] rounded-xl font-medium flex items-center justify-center hover:bg-[#E8F5F7] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronLeft size={16} className="mr-1" /> Back
         </motion.button>
@@ -220,16 +245,19 @@ export default function TimeSelection({ onTimeSelect, onBack }) {
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleContinue}
-          disabled={!selectedTime}
-          className={`flex-1 py-3 rounded-xl font-medium shadow-md transition-all duration-300 ${
-            selectedTime
-              ? "bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white hover:shadow-lg"
-              : "bg-gray-200 text-gray-500 cursor-not-allowed"
-          }`}
+          disabled={!selectedTime || isBooking}
+          className="flex-1 py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] text-white rounded-xl font-medium flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Continue <ChevronRight size={16} className="ml-1 inline-block" />
+          {isBooking ? (
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            "Continue"
+          )}
         </motion.button>
       </div>
     </div>
-  )
+  );
 }

@@ -4,10 +4,49 @@ import { motion } from "framer-motion"
 import { X, Check, Calendar, Clock } from "lucide-react"
 import confetti from "canvas-confetti"
 import { useEffect } from "react"
+import { useCart } from "@/src/contexts" // Import useCart
 
 export default function BookingConfirmation({ appointmentId, serviceName, selectedDate, selectedTime, onClose }) {
+
+  const { clearCart } = useCart()
+  
   // Trigger confetti effect when component mounts
   useEffect(() => {
+    // Only clear cart if there's something to clear
+    // This prevents an infinite loop by not calling clearCart if the cart is already empty
+    if (typeof window !== 'undefined') {
+      const cartData = localStorage.getItem("vaccineCart");
+      
+      // Only clear if cart isn't already empty
+      if (cartData && cartData !== "[]") {
+        // Clear cart only once
+        clearCart();
+        
+        // Set a flag to indicate we've cleared the cart
+        localStorage.setItem("cart_cleared", "true");
+      }
+    }
+    
+    // Add event listener to prevent navigation
+    const handleBeforeUnload = (event) => {
+      // Only prevent navigation if the user hasn't clicked "Done"
+      if (!sessionStorage.getItem("booking_success")) {
+        const message = "Your booking is complete! Please click 'Done' to continue.";
+        event.returnValue = message;
+        return message;
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Set flags to indicate we're showing confirmation - do only once
+    if (typeof window !== 'undefined' && !sessionStorage.getItem("showing_confirmation")) {
+      console.log("Setting confirmation flags in BookingConfirmation component");
+      sessionStorage.setItem("showing_confirmation", "true");
+      localStorage.setItem("booking_success", "true");
+      sessionStorage.setItem("in_booking_process", "true");
+    }
+    
     const duration = 3 * 1000
     const animationEnd = Date.now() + duration
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
@@ -38,8 +77,32 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
       })
     }, 250)
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
   }, [])
+
+  // Handle the close button click
+  const handleClose = (e) => {
+    // Prevent default link behavior
+    if (e) e.preventDefault();
+    
+    // Only clear cart if it hasn't been cleared already
+    if (typeof window !== 'undefined' && !localStorage.getItem("cart_cleared")) {
+      clearCart();
+      localStorage.setItem("cart_cleared", "true");
+    }
+    
+    // Set a session flag to indicate we had a successful booking
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem("booking_success", "true");
+      sessionStorage.setItem("booking_completed", "true");
+    }
+    
+    // Call the onClose function provided by the parent
+    if (onClose) onClose();
+  }
 
   // Default date display if none provided
   const displayDate = selectedDate || "19 Apr, 2025";
@@ -51,7 +114,7 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
     const timeParts = selectedTime.split(':');
     const hour = parseInt(timeParts[0], 10);
     const minute = timeParts[1];
-    const period = hour >= 12 ? 'PM' : 'AM';
+    const period = hour >= 12 ? '' : '';
     const hour12 = hour % 12 || 12; // Convert 0 to 12
     displayTime = `${hour12}:${minute} ${period}`;
   } else {
@@ -61,7 +124,7 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
   return (
     <div className="p-6 text-center">
       <button
-        onClick={onClose}
+        onClick={handleClose}
         className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-1 transition-colors"
       >
         <X size={18} />
@@ -189,14 +252,61 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
           A confirmation has been sent to your mobile number. Please arrive 10 minutes before your appointment time.
         </p>
 
-        <motion.button
-          whileHover={{ scale: 1.02, y: -1 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onClose}
-          className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300"
-        >
-          Done
-        </motion.button>
+        <div className="space-y-3">
+          <motion.button
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={(e) => {
+              // Set the completion flag first
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem("booking_success", "true");
+                sessionStorage.setItem("booking_completed", "true");
+                // Clear the booking process flag since we're done
+                sessionStorage.removeItem("in_booking_process");
+                // Also set cart_cleared to prevent multiple clearCart calls
+                localStorage.setItem("cart_cleared", "true");
+              }
+              
+              // Handle close without clearing cart again
+              handleClose(e);
+              
+              // Redirect to home page with short delay to ensure state updates
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 100);
+            }}
+            className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            Done
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={(e) => {
+              // Set the completion flag first
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem("booking_success", "true");
+                sessionStorage.setItem("booking_completed", "true");
+                // Clear the booking process flag since we're done
+                sessionStorage.removeItem("in_booking_process");
+                // Also set cart_cleared to prevent multiple clearCart calls
+                localStorage.setItem("cart_cleared", "true");
+              }
+              
+              // Handle close without clearing cart again
+              handleClose(e);
+              
+              // Redirect to vaccines page with short delay to ensure state updates
+              setTimeout(() => {
+                window.location.href = "/vaccines";
+              }, 100);
+            }}
+            className="w-full py-3 border border-[#00ACC1] text-[#00ACC1] bg-white hover:bg-[#E8F5F7] rounded-xl font-medium transition-colors duration-300"
+          >
+            Book Another Vaccine
+          </motion.button>
+        </div>
       </motion.div>
     </div>
   )

@@ -1,6 +1,9 @@
 import { Instrument_Sans, Average_Sans, Plus_Jakarta_Sans } from "next/font/google"
 import Header from "@/components/Header"
 import "./globals.css"
+import { AuthProvider } from "@/src/contexts/AuthContext"
+import { CartProvider } from "@/src/contexts/CartContext"
+import { AppProvider } from "@/src/contexts/AppContext"
 
 // Load fonts
 const instrumentSans = Instrument_Sans({
@@ -22,7 +25,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata = {
   title: "Bishop Pharmacy",
-  description: "Bishop Pharmacy",
+  description: "Best pharmacy in the world, located at the heart of Bishop's Waltham",
 }
 
 export default function RootLayout({ children }) {
@@ -32,8 +35,14 @@ export default function RootLayout({ children }) {
       className={`!scroll-smooth ${instrumentSans.variable} ${averageSans.variable} ${plusJakarta.variable}`}
     >
       <body suppressHydrationWarning={true}>
-        <Header />
-        {children}
+        <AppProvider>
+          <AuthProvider>
+            <CartProvider>
+              <Header />
+              {children}
+            </CartProvider>
+          </AuthProvider>
+        </AppProvider>
       </body>
     </html>
   )

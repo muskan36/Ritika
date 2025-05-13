@@ -2,359 +2,224 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
-import { ChevronLeft, ChevronRight, Shield } from "lucide-react"
-import Image from "next/image"
-import { sendOTP, verifyOTP } from "../../lib/utils"
+import { ChevronLeft, ChevronRight, Phone, RefreshCw } from "lucide-react"
 
-export default function PhoneVerification({ mobile, onVerificationComplete, onBack, loading: externalLoading }) {
+export default function PhoneVerification({ mobile, onVerificationComplete, onBack, loading, onResendOTP }) {
   const [otp, setOtp] = useState(["", "", "", ""])
-  const [isOtpSent, setIsOtpSent] = useState(false)
-  const [countdown, setCountdown] = useState(30)
   const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [countdown, setCountdown] = useState(30)
+  const [resending, setResending] = useState(false)
   const inputRefs = useRef([])
 
+  // Focus on first input field on mount
+  useEffect(() => {
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus()
+    }
+  }, [])
+
+  // Handle countdown timer
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [countdown])
+
   // Handle OTP input change
-  const handleOtpChange = (index, value) => {
-    // Only allow numbers
-    if (value && !/^\d+$/.test(value)) return
+  const handleChange = (e, index) => {
+    const { value } = e.target
 
+    // Only allow digits
+    if (value && !/^\d+$/.test(value)) {
+      return
+    }
+
+    // Update OTP state
     const newOtp = [...otp]
-    newOtp[index] = value
 
+    // Take just the last character if multiple are pasted
+    newOtp[index] = value.slice(-1)
     setOtp(newOtp)
 
-    // Auto-focus next input
+    // Clear error when user types
+    if (error) {
+      setError("")
+    }
+
+    // Auto focus next input
     if (value && index < 3) {
       inputRefs.current[index + 1].focus()
     }
   }
 
-  // Handle key down for backspace
-  const handleKeyDown = (index, e) => {
+  // Handle keydown for backspace
+  const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
+      // Focus previous input on backspace if current input is empty
       inputRefs.current[index - 1].focus()
     }
   }
 
-  // Check if component is in loading state (either internal or external)
-  const isLoading = loading || externalLoading;
+  // Handle paste event for OTP
+  const handlePaste = (e) => {
+    e.preventDefault()
+    const pastedData = e.clipboardData.getData("text/plain").trim()
 
-  // Handle OTP verification
-  const handleVerifyOtp = async () => {
-    const enteredOtp = otp.join("")
-
-    if (enteredOtp.length !== 4) {
-      setError("Please enter a valid OTP")
-      return
-    }
-
-    setLoading(true)
-    setError("")
-
-    const result = await verifyOTP(mobile, enteredOtp)
-
-    if (result.success) {
-      onVerificationComplete()
-    } else {
-      setError(result.message)
-      setLoading(false) // Only clear loading if error - success will be handled by parent
+    // Check if pasted content is a 4-digit number
+    if (/^\d{4}$/.test(pastedData)) {
+      const digits = pastedData.split("")
+      setOtp(digits)
+      inputRefs.current[3].focus()
     }
   }
 
-  // Handle send OTP
-  const handleSendOtp = async () => {
-    if (!mobile || mobile.length < 10) {
-      setError("Please enter a valid mobile number")
-      return
-    }
+  // Handle resend OTP
+  const handleResend = () => {
+    if (countdown > 0 || resending) return
 
-    setLoading(true)
+    setResending(true)
     setError("")
 
-    const result = await sendOTP(mobile)
-
-    if (result.success) {
-      setIsOtpSent(true)
-      setCountdown(30)
-      
-      // Focus first input after OTP is sent
+    // Call the parent component's resend handler
+    if (onResendOTP) {
+      onResendOTP().then(() => {
+        // Reset countdown regardless of the result
+        setResending(false)
+        setCountdown(30) // Reset countdown
+      }).catch(err => {
+        console.error('Error in resend OTP:', err)
+        setResending(false)
+      })
+    } else {
+      // Fallback if no handler provided
       setTimeout(() => {
-        if (inputRefs.current[0]) {
-          inputRefs.current[0].focus()
-        }
-      }, 100)
-    } else {
-      setError(result.message)
+        setResending(false)
+        setCountdown(30) // Reset countdown
+      }, 1500)
     }
-
-    setLoading(false)
   }
 
-  // Countdown timer
-  useEffect(() => {
-    let timer
-    if (isOtpSent && countdown > 0) {
-      timer = setTimeout(() => {
-        setCountdown(countdown - 1)
-      }, 1000)
+  // Handle submit
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const otpValue = otp.join("")
+
+    if (otpValue.length !== 4) {
+      setError("Please enter a valid 4-digit code")
+      return
     }
 
-    return () => {
-      if (timer) clearTimeout(timer)
-    }
-  }, [isOtpSent, countdown])
+    // Pass the OTP to parent component for verification
+    onVerificationComplete(otpValue)
+  }
 
   return (
     <div className="p-6 pt-2">
-      <div className="bg-gradient-to-r from-[#E8F5F7] to-[#F0F9FA] p-6 rounded-xl">
-        <div className="flex items-center mb-4">
-          <Shield size={18} className="text-[#00ACC1] mr-2" />
-          <h3 className="text-base font-medium bg-gradient-to-r from-[#00ACC1] to-[#0097A7] bg-clip-text text-transparent">
-            {!isOtpSent ? "Verify Your Mobile" : "Enter OTP"}
-          </h3>
+      <div className="p-6 rounded-xl">
+        <div className="flex items-center justify-center">
+          <div className="bg-gray-100 rounded-full p-2 mb-4">
+            <Phone size={24} className="text-[#00ACC1]" />
+          </div>
         </div>
 
-        {!isOtpSent ? (
-          <>
-            <div className="mb-6">
-              <div className="relative">
-                <input
-                  type="tel"
-                  value={mobile}
-                  readOnly
-                  className="w-full px-4 py-3 bg-white border border-gray-100 rounded-lg focus:outline-none shadow-sm"
-                  placeholder="Enter Mobile Number"
-                />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3 w-3 text-green-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">We'll send a verification code to this number</p>
-            </div>
+        <div className="text-center mb-6">
+          <h3 className="text-lg font-semibold text-gray-800">Verification Code</h3>
+          <p className="text-sm text-gray-500 mt-1">
+            We've sent a verification code to <span className="font-medium">{mobile}</span>
+          </p>
+        </div>
 
-            {error && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 text-sm text-red-500 flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-                {error}
-              </motion.p>
-            )}
+        <form onSubmit={handleSubmit}>
+          {/* OTP Input Group */}
+          <div className="flex justify-center gap-3 mb-6">
+            {otp.map((digit, index) => (
+              // In the OTP input field, replace the current input with this:
+              <motion.input
+                key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
+                type="tel" 
+                inputMode="numeric" 
+                pattern="[0-9]*" 
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleChange(e, index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                onPaste={index === 0 ? handlePaste : null}
+                className={`w-12 h-12 text-center text-xl font-bold border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00ACC1]/50
+    ${error ? "border-red-300 bg-red-50" : "border-gray-200 bg-white"}`}
+                disabled={loading}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: index * 0.1 }}
+              />
+            ))}
+          </div>
 
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-red-500 text-sm mb-4"
+            >
+              {error}
+            </motion.div>
+          )}
+
+          {/* Resend Option */}
+          <div className="text-center mb-6">
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={countdown > 0 || resending || loading}
+              className={`text-sm font-medium flex items-center justify-center mx-auto
+                ${countdown > 0 || resending ? "text-gray-400 cursor-not-allowed" : "text-[#00ACC1] hover:underline"}`}
+            >
+              {resending ? (
+                <>
+                  <RefreshCw size={14} className="mr-1 animate-spin" />
+                  Resending...
+                </>
+              ) : countdown > 0 ? (
+                `Resend code in ${countdown}s`
+              ) : (
+                "Resend verification code"
+              )}
+            </button>
+          </div>
+
+          {/* Navigation buttons */}
+          <div className="flex gap-4">
             <motion.button
+              type="button"
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handleSendOtp}
-              disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 mb-6 relative"
+              onClick={onBack}
+              disabled={loading}
+              className="flex-1 py-3 border border-[#00ACC1] text-[#00ACC1] rounded-xl font-medium flex items-center justify-center hover:bg-[#E8F5F7] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Sending...
-                </span>
-              ) : (
-                "Send OTP"
-              )}
+              <ChevronLeft size={16} className="mr-1" /> Back
             </motion.button>
-
-            <div className="relative h-40 w-full mt-4 overflow-hidden rounded-lg shadow-md">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00ACC1]/10 to-[#0097A7]/20" />
-              <Image src="/assets/vaccination.webp" alt="Vaccination" fill className="object-cover" />
-            </div>
-          </>
-        ) : (
-          <>
-            <p className="text-sm text-gray-600 mb-6 flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1 text-[#00ACC1]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              We've sent a 4-digit OTP to {mobile}
-            </p>
-
-            <div className="flex justify-between mb-6 gap-2">
-              {otp.map((digit, index) => (
-                <motion.div key={index} whileHover={{ y: -2 }} className="flex-1">
-                  <input
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-full h-14 text-center text-xl font-bold bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00ACC1]/30 shadow-sm"
-                    disabled={isLoading}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            {error && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 text-sm text-red-500 flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-                {error}
-              </motion.p>
-            )}
 
             <motion.button
+              type="submit"
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handleVerifyOtp}
-              disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 mb-4 relative"
+              disabled={otp.join("").length !== 4 || loading}
+              className="flex-1 py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {externalLoading ? "Booking..." : "Verifying..."}
-                </span>
+              {loading ? (
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
               ) : (
-                "Verify OTP"
+                <>Verify <ChevronRight size={16} className="ml-1" /></>
               )}
             </motion.button>
-
-            <div className="flex justify-center items-center mb-6">
-              {countdown > 0 ? (
-                <p className="text-sm text-center text-gray-600 flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 mr-1 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  Resend OTP in <span className="font-medium text-[#00ACC1] ml-1">{countdown}s</span>
-                </p>
-              ) : (
-                <button
-                  onClick={handleSendOtp}
-                  disabled={isLoading}
-                  className="text-sm text-[#00ACC1] hover:text-[#0097A7] hover:underline transition-colors flex items-center"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-[#00ACC1]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sending...
-                    </span>
-                  ) : (
-                    <>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 mr-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        />
-                      </svg>
-                      Resend OTP
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Navigation buttons */}
-      <div className="mt-6 flex gap-4">
-        <motion.button
-          whileHover={{ scale: 1.02, y: -1 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onBack}
-          disabled={isLoading}
-          className="flex-1 py-3 border border-[#00ACC1] text-[#00ACC1] rounded-xl font-medium flex items-center justify-center hover:bg-[#E8F5F7] transition-colors duration-300 disabled:opacity-50"
-        >
-          <ChevronLeft size={16} className="mr-1" /> Back
-        </motion.button>
-
-        {isOtpSent && (
-          <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleVerifyOtp}
-            disabled={isLoading}
-            className="flex-1 py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50"
-          >
-            {isLoading ? "Processing..." : "Verify"} {!isLoading && <ChevronRight size={16} className="ml-1 inline-block" />}
-          </motion.button>
-        )}
+          </div>
+        </form>
       </div>
     </div>
   )
