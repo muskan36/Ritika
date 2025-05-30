@@ -6,27 +6,41 @@ import confetti from "canvas-confetti"
 import { useEffect } from "react"
 import { useCart } from "@/src/contexts" // Import useCart
 
-export default function BookingConfirmation({ appointmentId, serviceName, selectedDate, selectedTime, onClose }) {
+export default function BookingConfirmation({ appointmentId, serviceName, selectedDate, selectedTime, onClose, bookingId,bookingDate }) {
 
-  const { clearCart } = useCart()
-  
+  const {
+    cart,
+    addToCart,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    subtotal,
+    tax,
+    clearCart,
+    grandTotal
+  } = useCart()
+
+
+  console.log("bookingDate22222334",bookingDate)
+
+
   // Trigger confetti effect when component mounts
   useEffect(() => {
     // Only clear cart if there's something to clear
     // This prevents an infinite loop by not calling clearCart if the cart is already empty
     if (typeof window !== 'undefined') {
       const cartData = localStorage.getItem("vaccineCart");
-      
+
       // Only clear if cart isn't already empty
       if (cartData && cartData !== "[]") {
         // Clear cart only once
         clearCart();
-        
+
         // Set a flag to indicate we've cleared the cart
         localStorage.setItem("cart_cleared", "true");
       }
     }
-    
+
     // Add event listener to prevent navigation
     const handleBeforeUnload = (event) => {
       // Only prevent navigation if the user hasn't clicked "Done"
@@ -36,9 +50,9 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
         return message;
       }
     };
-    
+
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     // Set flags to indicate we're showing confirmation - do only once
     if (typeof window !== 'undefined' && !sessionStorage.getItem("showing_confirmation")) {
       console.log("Setting confirmation flags in BookingConfirmation component");
@@ -46,7 +60,7 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
       localStorage.setItem("booking_success", "true");
       sessionStorage.setItem("in_booking_process", "true");
     }
-    
+
     const duration = 3 * 1000
     const animationEnd = Date.now() + duration
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
@@ -87,26 +101,26 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
   const handleClose = (e) => {
     // Prevent default link behavior
     if (e) e.preventDefault();
-    
+
     // Only clear cart if it hasn't been cleared already
     if (typeof window !== 'undefined' && !localStorage.getItem("cart_cleared")) {
       clearCart();
       localStorage.setItem("cart_cleared", "true");
     }
-    
+
     // Set a session flag to indicate we had a successful booking
     if (typeof window !== 'undefined') {
       sessionStorage.setItem("booking_success", "true");
       sessionStorage.setItem("booking_completed", "true");
     }
-    
+
     // Call the onClose function provided by the parent
     if (onClose) onClose();
   }
 
   // Default date display if none provided
   const displayDate = selectedDate || "19 Apr, 2025";
-  
+
   // Default time display if none provided (convert 24h to 12h format if needed)
   let displayTime = selectedTime || "10:15";
   if (selectedTime) {
@@ -120,6 +134,39 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
   } else {
     displayTime = "10:15 AM";
   }
+
+
+  const handlePayment = async () => {
+    console.log("ggg22222",bookingDate)
+
+    try {
+      const response = await fetch('https://7n0wver1gl.execute-api.eu-west-2.amazonaws.com/dev/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: bookingId,
+          bookingDate: bookingDate
+        }),
+      });
+
+      const { sessionUrl } = await response.json();
+      console.log(sessionUrl)
+
+      if (sessionUrl) {
+        window.location.href = sessionUrl;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Payment processing error:', error);
+      alert('Failed to initiate payment: ' + error.message);
+    } finally {
+
+    }
+  };
+
 
   return (
     <div className="p-6 text-center">
@@ -256,6 +303,38 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
           <motion.button
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
+            onClick={async (e) => {
+              console.log("Before handlePayment");
+
+              try {
+                await handlePayment(); // Make sure this is async if needed
+                console.log("ffff"); // Printed after successful payment
+
+                console.log("dwdwdw"); // Confirming code flow
+
+                // Optional session/localStorage handling
+                // if (typeof window !== 'undefined') {
+                //   sessionStorage.setItem("booking_success", "true");
+                //   sessionStorage.setItem("booking_completed", "true");
+                //   sessionStorage.removeItem("in_booking_process");
+                //   localStorage.setItem("cart_cleared", "true");
+                // }
+
+                console.log("hhhhh"); // Post-payment step
+                handleClose(e); // Close modal or drawer
+                console.log("jjjj"); // Final step
+              } catch (error) {
+                console.error("Error during payment or post-payment logic:", error);
+              }
+            }}
+            className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            Pay Now
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
             onClick={(e) => {
               // Set the completion flag first
               if (typeof window !== 'undefined') {
@@ -266,20 +345,21 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
                 // Also set cart_cleared to prevent multiple clearCart calls
                 localStorage.setItem("cart_cleared", "true");
               }
-              
+
               // Handle close without clearing cart again
               handleClose(e);
-              
-              // Redirect to home page with short delay to ensure state updates
+
+              // Redirect to vaccines page with short delay to ensure state updates
               setTimeout(() => {
-                window.location.href = "/";
+                window.location.href = "/vaccines";
               }, 100);
             }}
-            className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300"
+           /* className="w-full py-3 border border-[#00ACC1] text-[#00ACC1] bg-white hover:bg-[#E8F5F7] rounded-xl font-medium transition-colors duration-300"*/
+             className="w-full py-3 bg-gradient-to-r from-[#00ACC1] to-[#0097A7] hover:from-[#0097A7] hover:to-[#00ACC1] text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-300"
           >
-            Done
+            Pay later
           </motion.button>
-          
+
           <motion.button
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
@@ -299,13 +379,16 @@ export default function BookingConfirmation({ appointmentId, serviceName, select
               
               // Redirect to vaccines page with short delay to ensure state updates
               setTimeout(() => {
-                window.location.href = "/vaccines";
+                window.location.href = "/";
               }, 100);
             }}
             className="w-full py-3 border border-[#00ACC1] text-[#00ACC1] bg-white hover:bg-[#E8F5F7] rounded-xl font-medium transition-colors duration-300"
           >
-            Book Another Vaccine
+            Book Another Appointment
           </motion.button>
+
+       
+        
         </div>
       </motion.div>
     </div>

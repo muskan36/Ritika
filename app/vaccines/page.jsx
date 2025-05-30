@@ -288,6 +288,7 @@ export default function VaccinesPage() {
                                     className="w-full bg-[#0D73A2] text-white font-medium py-3 rounded-lg mt-6 flex items-center justify-center disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     disabled={cart.length === 0 || bookingLoading}
                                     onClick={handleBooking}
+                                    
                                 >
                                     {bookingLoading ? (
                                         <>

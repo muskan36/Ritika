@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import BookingPage from "@/components/booking/booking-page"
+
 import BookingLoading from "@/app/booking/loading"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/src/contexts/index"

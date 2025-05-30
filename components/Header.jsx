@@ -26,6 +26,7 @@ const Header = () => {
             <a href="#home" className="hover:text-[#0B5C64]">Home</a>
             <a href="#services" className="hover:text-[#0B5C64]">Services</a>
             <a href="#vaccination" className="hover:text-[#0B5C64]">Book Vaccination</a>
+            <a href="#blog" className="hover:text-[#0B5C64]">Blogs</a>
             <a href="#locations" className="hover:text-[#0B5C64]">Locations</a>
             <a href="#about" className="hover:text-[#0B5C64]">About</a>
             <a href="#faq" className="hover:text-[#0B5C64]">Help</a>
@@ -95,9 +96,11 @@ const Header = () => {
             <Link href="/" onClick={toggleMenu}>Home</Link>
             <Link href="/services" onClick={toggleMenu}>Services</Link>
             <Link href="/book-vaccination" onClick={toggleMenu}>Book Vaccination</Link>
+            <Link href="/blog" onClick={toggleMenu}>Blogs</Link>
             <Link href="/locations" onClick={toggleMenu}>Locations</Link>
             <Link href="/about" onClick={toggleMenu}>About</Link>
             <Link href="/help" onClick={toggleMenu}>Help</Link>
+            
             {isAuthenticated && (
               <button 
                 onClick={() => {

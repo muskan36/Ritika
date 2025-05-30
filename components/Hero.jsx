@@ -1,39 +1,52 @@
 'use client';
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-
-const bgImages = [
-  '/assets/heroimage1.webp',
-  '/assets/heroimage2.webp',
-  '/assets/heroimage3.webp'
-];
-
-const labels = ['Ear Microsuction', 'Travel Clinic', 'Weight Loss'];
-
-const content = {
-  0: {
-    title: "Your Trusted Ear",
-    subtitle: "Microsuction Clinic",
-    description: "TravelSync provides professional ear care with microsuction, safely removing earwax with precision and care for optimal ear health."
-  },
-  1: {
-    title: "Your Trusted Travel",
-    subtitle: "Health Companion",
-    description: "TravelSync helps you get the right vaccines, at the right time, for the right destination—personalized to your itinerary and health needs."
-  },
-  2: {
-    title: "Your Trusted Weight",
-    subtitle: "Loss Companion",
-    description: "TravelSync supports your weight loss journey with personalized guidance, helping you reach your goals at the right pace, in the right way."
-  }
-};
+import StepComponent from "@/components/booking/booking-page";
 
 const Hero = () => {
+
   const [index, setIndex] = useState(0);
+
+  const bgImages = [
+    '/assets/heroimage1.webp',
+    '/assets/heroimage2.webp',
+    '/assets/heroimage3.webp'
+  ];
+
+  const labels = ['Ear Microsuction', 'Travel Clinic', 'Weight Loss'];
+  const [labelText, setlabelText] = useState('Appointment');
+
+  const steps = {
+    DATE: 1,
+    TIME: 2,
+    DETAILS: 3,
+    VERIFICATION: 4,
+  };
+
+  const [currentStep, setCurrentStep] = useState(steps.DATE);
+
+
+ 
+  const content = {
+    0: {
+      title: "Your Trusted Ear",
+      subtitle: "Microsuction Clinic",
+      description: "TravelSync provides professional ear care with microsuction, safely removing earwax with precision and care for optimal ear health."
+    },
+    1: {
+      title: "Your Trusted Travel",
+      subtitle: "Health Companion",
+      description: "TravelSync helps you get the right vaccines, at the right time, for the right destination—personalized to your itinerary and health needs."
+    },
+    2: {
+      title: "Your Trusted Weight",
+      subtitle: "Loss Companion",
+      description: "TravelSync supports your weight loss journey with personalized guidance, helping you reach your goals at the right pace, in the right way."
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -44,13 +57,10 @@ const Hero = () => {
 
   return (
     <div className="w-full flex justify-center items-center py-2 md:py-5 font-average">
-      <div className="relative w-[95%] md:w-[97%] rounded-xl md:rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-black" 
-           style={{ 
-             height: '90vh',
-             minHeight: '700px',
-             maxHeight: '1000px'
-           }}>
-
+      <div
+        className="relative w-[95%] md:w-[97%] rounded-xl md:rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-black"
+        style={{ height: '90vh', minHeight: '700px', maxHeight: '1000px' }}
+      >
         {/* Background Image */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -93,6 +103,7 @@ const Hero = () => {
                   <span className="text-xs font-semibold">Lakhs</span>
                 </div>
               </div>
+
               <h1 className="text-4xl sm:text-5xl md:text-6xl leading-tight font-average">
                 {content[index].title}<br />
                 {content[index].subtitle}
@@ -101,17 +112,26 @@ const Hero = () => {
               <p className="text-sm md:text-base text-gray-100 font-light max-w-md font-average">
                 {content[index].description}
               </p>
-
-              <button className="bg-white text-black rounded-full px-3 py-2 flex items-center shadow hover:bg-gray-100 transition w-fit cursor-pointer">
-               <Link href='/vaccines'> <span className="pl-3 pr-4 text-sm font-semibold ">Get An Appointment</span></Link>
-                <span className="bg-[#8DBBFF] p-1.5 rounded-full flex items-center justify-center">
-                  <ArrowRight size={14} className="text-white" />
-                </span>
-              </button>
+           <div>
+             
+                <Link href={{
+               pathname: "/booking",
+               query: { st: '1', service: 'Appointment' }, // dynamic label passed in URL
+              }}
+              as="/booking?st=1"
+              className="bg-white text-black rounded-full px-3 py-2 flex items-center shadow hover:bg-gray-100 transition w-fit cursor-pointer"
+              
+            >
+           <span className="pl-3 pr-4 text-sm font-semibold">Get An Appointment</span>
+           <span className="bg-[#8DBBFF] p-1.5 rounded-full flex items-center justify-center">
+           <ArrowRight size={14} className="text-white" />
+        </span>
+      </Link>
+      </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Right Labels - Hidden on mobile, visible from md breakpoint */}
+          {/* Right Labels */}
           <div className="hidden md:flex flex-col justify-center gap-4 text-right">
             {labels.map((label, i) => {
               const isActive = i === index;
@@ -140,18 +160,18 @@ const Hero = () => {
             })}
           </div>
 
-          {/* Mobile Indicators - Only visible on mobile */}
-          <div className='flex justify-center items-center md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2'>
-          <div className="md:hidden flex justify-center gap-2 mt-4">
-            {labels.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setIndex(i)}
-                className={`w-2 h-2 rounded-full transition-colors ${i === index ? 'bg-white' : 'bg-white/50'}`}
-                aria-label={`Go to slide ${i + 1}`}
-              />
-            ))}
-          </div>
+          {/* Mobile Indicators */}
+          <div className="flex justify-center items-center md:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <div className="flex justify-center gap-2 mt-4">
+              {labels.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-colors ${i === index ? 'bg-white' : 'bg-white/50'}`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
