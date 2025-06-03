@@ -62,7 +62,7 @@ export default function Home() {
             <DoctorTestimonial />
             <section id="vaccination"><VaccinationComponent /></section>
             <section id="faq"><FAQComponent /></section>
-            <section id="blogs"><BlogResources /></section>
+            {/*<section id="blogs"><BlogResources /></section>*/}
             <Footer />
           </motion.div>
         )}

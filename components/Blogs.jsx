@@ -1,12 +1,51 @@
-"use client"
+/*"use client"
 
-import { motion, useInView, useScroll, useTransform } from "framer-motion"
+/*import { motion, useInView, useScroll, useTransform } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { ArrowRight, Search, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
 export default function BlogResources() {
-  const sectionRef = useRef(null)
+  return (
+    <div className="min-h-screen bg-white">
+      <div>
+        <title>Why IDYLLL is the Best Cafe in Indiranagar for Brunch</title>
+        <meta name="description" content="Discover why IDYLLL stands out as the best brunch spot in Indiranagar" />
+      </div>
+
+      {/* Hero Section 
+      <div className="relative h-96 w-full">
+        <Image 
+          src="/hospital.jpg" // Replace with your actual image path
+          alt="vacines"
+          layout="fill"
+          objectFit="cover"
+          className="brightness-75"
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white text-center px-4">
+           Bishops Waltham 
+          </h1>
+        </div>
+      </div>
+
+      {/* Content Section 
+      <main className="max-w-4xl mx-auto px-4 py-12">
+        <article className="prose prose-lg max-w-none">
+          <div className="text-lg text-gray-700 leading-relaxed space-y-6">
+            <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
+            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non 
+            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          </div>
+        </article>
+      </main>
+    </div>
+  );
+}*/
+ /* const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
   const [hasAnimated, setHasAnimated] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
@@ -144,8 +183,8 @@ export default function BlogResources() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      {/* Notification */}
-      {showNotification && (
+      {/* Notification */
+     /* {showNotification && (
         <motion.div
           className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-[#037F91] text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2"
           initial="hidden"
@@ -167,8 +206,8 @@ export default function BlogResources() {
         </motion.div>
       )}
 
-      {/* Decorative elements */}
-      <div className="absolute left-0 top-0 w-full h-32 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
+      {/* Decorative elements */
+     /* <div className="absolute left-0 top-0 w-full h-32 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
       <motion.div
         className="absolute -left-20 top-40 w-40 h-40 rounded-full bg-[#037F91]/5 blur-3xl"
         style={{ y: useTransform(scrollYProgress, [0, 1], [0, -100]) }}
@@ -184,8 +223,8 @@ export default function BlogResources() {
         initial="hidden"
         animate={isInView || hasAnimated ? "visible" : "hidden"}
       >
-        {/* Header with staggered animation */}
-        <motion.div
+        {/* Header with staggered animation */
+      /*  <motion.div
           variants={headerVariants}
           className="text-center mb-6 "
         >
@@ -213,8 +252,8 @@ export default function BlogResources() {
               delay: 0.1
             }}
           >
-            {/* Animated background elements */}
-            <motion.div
+            {/* Animated background elements */
+          /*  <motion.div
               className="absolute inset-0  to-transparent opacity-0"
               animate={isInView || hasAnimated ? {
                 opacity: 0.3,
@@ -232,13 +271,13 @@ export default function BlogResources() {
               } : {}}
             />
 
-            {/* Main text with gradient */}
-            <p className="text-xs tracking-wide uppercase font-semibold bg-gradient-to-r from-[#4A9CEE] via-[#34B3E4] to-[#2ECC71] text-transparent bg-clip-text relative z-10">
+            {/* Main text with gradient */
+          /*  <p className="text-xs tracking-wide uppercase font-semibold bg-gradient-to-r from-[#4A9CEE] via-[#34B3E4] to-[#2ECC71] text-transparent bg-clip-text relative z-10">
               OUR HEALTH BLOG
             </p>
 
-            {/* Optional: Animated dots for visual interest */}
-            <motion.div
+            {/* Optional: Animated dots for visual interest */
+          /*  <motion.div
               className="absolute -right-1 -top-1 w-2 h-2 bg-[#4A9CEE] rounded-full"
               animate={isInView || hasAnimated ? {
                 scale: [1, 1.3, 1],
@@ -263,8 +302,8 @@ export default function BlogResources() {
           The latest industry news, interviews, technologies, and resources to help you make informed health decisions.
         </motion.p>
 
-        {/* Blog Cards with staggered animation */}
-        <div className="grid md:grid-cols-3 gap-8 font-plusjakarta">
+        {/* Blog Cards with staggered animation */
+      /*  <div className="grid md:grid-cols-3 gap-8 font-plusjakarta">
           {blogPosts.map((post, index) => (
             <motion.a
               key={post.id}
@@ -306,8 +345,8 @@ export default function BlogResources() {
                 </div>
               </div>
 
-              {/* Card Content */}
-              <div className="p-6">
+              {/* Card Content */
+            /*  <div className="p-6">
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="text-xl font-bold text-gray-800 group-hover:text-[#037F91] transition-colors">
                     {post.title}
@@ -342,8 +381,8 @@ export default function BlogResources() {
           ))}
         </div>
 
-        {/* View All Button */}
-        <motion.div variants={itemVariants} className="flex justify-center mt-12">
+        {/* View All Button */
+      /*  <motion.div variants={itemVariants} className="flex justify-center mt-12">
           <motion.button
             className="bg-[#E6F4F6] text-[#037F91] px-6 py-3 rounded-xl flex items-center gap-2 font-medium hover:bg-[#d0ebef] transition-colors"
             whileHover={{ scale: 1.05 }}
@@ -357,4 +396,4 @@ export default function BlogResources() {
       </motion.div>
     </motion.div>
   )
-}
+}*/
