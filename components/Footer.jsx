@@ -608,8 +608,8 @@ export default function Footer() {
                   <ul className="space-y-2">
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             For Microsuction
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -618,8 +618,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Weight Loss
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -628,8 +628,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Travel Care
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -645,8 +645,8 @@ export default function Footer() {
                   <ul className="space-y-2">
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Guides
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -655,8 +655,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Vaccines
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -665,8 +665,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Documentation
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -682,8 +682,8 @@ export default function Footer() {
                   <ul className="space-y-2">
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Blog
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -692,8 +692,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Guides
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -702,8 +702,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Webinars
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -712,8 +712,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Documentation
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -729,8 +729,8 @@ export default function Footer() {
                   <ul className="space-y-2">
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             About Us
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -739,8 +739,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Partners
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -749,8 +749,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Privacy Policy
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>
@@ -759,8 +759,8 @@ export default function Footer() {
                     </li>
                     <li>
                       <Link href="#" className="text-gray-500 hover:text-[#3498db] text-sm group flex items-center">
-                        <span className="relative overflow-hidden">
-                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        <span className="relative overflow-hidden pr-1">
+                          <span className="inline-block transition-transform duration-300 group-hover:translate-x-[2px]">
                             Terms of Service
                           </span>
                           <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3498db] transition-all duration-300 group-hover:w-full"></span>

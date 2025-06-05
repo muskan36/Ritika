@@ -35,6 +35,8 @@ export default function VaccinesPage() {
             try {
                 const vaccineData = await fetchVaccines()
                 setVaccines(vaccineData)
+               
+        //const result = await callApi('some-endpoint', { param: 'value' });
             } catch (error) {
                 console.error("Failed to load vaccines:", error)
             } finally {
@@ -43,7 +45,9 @@ export default function VaccinesPage() {
         }
 
         loadVaccines()
+    
     }, [])
+
 
     const handleBooking = async () => {
         if (cart.length > 0) {

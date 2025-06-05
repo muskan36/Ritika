@@ -13,6 +13,7 @@ import TravelClinic from "@/components/TravelClinic"
 import VaccinationComponent from "@/components/Vaccination"
 import WhyChooseUs from "@/components/WhyChooseUs"
 import LoadingAnimation from "@/components/LoadingAnimation"
+import  BlogSection from "@/components/Blogs";
 import { useAuth, useCart, useApp } from "@/src/contexts/index"
 
 export default function Home() {
@@ -62,6 +63,7 @@ export default function Home() {
             <DoctorTestimonial />
             <section id="vaccination"><VaccinationComponent /></section>
             <section id="faq"><FAQComponent /></section>
+             <section id="blogs"><BlogSection /></section>
             {/*<section id="blogs"><BlogResources /></section>*/}
             <Footer />
           </motion.div>

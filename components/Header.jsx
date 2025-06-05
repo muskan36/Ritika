@@ -348,7 +348,7 @@ const Header = () => {
             <a href="#home" className="hover:text-[#0B5C64]">Home</a>
             <a href="#services" className="hover:text-[#0B5C64]">Services</a>
             <a href="#vaccination" className="hover:text-[#0B5C64]">Book Vaccination</a>
-            <Link href="/blog" className="hover:text-[#0B5C64]">Blogs</Link>
+            <Link href="#blog" className="hover:text-[#0B5C64]">Blogs</Link>
             <a href="#locations" className="hover:text-[#0B5C64]">Locations</a>
             <a href="#about" className="hover:text-[#0B5C64]">About</a>
             <a href="#faq" className="hover:text-[#0B5C64]">Help</a>
